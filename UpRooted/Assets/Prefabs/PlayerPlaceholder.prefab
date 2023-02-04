@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 415802049150937918}
   - component: {fileID: 415802049150937919}
   - component: {fileID: 415802049150937912}
+  - component: {fileID: -2354163640454483372}
+  - component: {fileID: 4515788735604469588}
   m_Layer: 0
   m_Name: PlayerPlaceholder
   m_TagString: Untagged
@@ -115,3 +117,35 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &-2354163640454483372
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 415802049150937913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c43fe1acb76a3a9499d7923aadfb908f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 5
+  rb: {fileID: 4515788735604469588}
+  itemPrefab: {fileID: 1454533747576084390, guid: 7d0053247e3a848a193e17a82d99bc08, type: 3}
+  itemStartTransform: {fileID: 415802049150937916}
+--- !u!54 &4515788735604469588
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 415802049150937913}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
