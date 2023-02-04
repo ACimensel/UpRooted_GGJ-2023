@@ -1,10 +1,11 @@
-/// Credit Senshi  
-/// Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/ (uGUITools link)
+/*  Credit Senshi  
+*   Sourced from - http://forum.unity3d.com/threads/scripts-useful-4-6-scripts-collection.264161/ (uGUITools link)
+*/
 
 using UnityEditor;
 namespace UnityEngine.UI.Extensions
 {
-    public static class uGUITools
+    public static class UGUITools
     {
         [MenuItem("uGUI/Anchors to Corners %[")]
         static void AnchorsToCorners()
@@ -16,10 +17,11 @@ namespace UnityEngine.UI.Extensions
 
                 if (t == null || pt == null) return;
 
-                Vector2 newAnchorsMin = new Vector2(t.anchorMin.x + t.offsetMin.x / pt.rect.width,
-                                                    t.anchorMin.y + t.offsetMin.y / pt.rect.height);
-                Vector2 newAnchorsMax = new Vector2(t.anchorMax.x + t.offsetMax.x / pt.rect.width,
-                                                    t.anchorMax.y + t.offsetMax.y / pt.rect.height);
+                var rect = pt.rect;
+                Vector2 newAnchorsMin = new Vector2(t.anchorMin.x + t.offsetMin.x / rect.width,
+                                                    t.anchorMin.y + t.offsetMin.y / rect.height);
+                Vector2 newAnchorsMax = new Vector2(t.anchorMax.x + t.offsetMax.x / rect.width,
+                                                    t.anchorMax.y + t.offsetMax.y / rect.height);
 
                 t.anchorMin = newAnchorsMin;
                 t.anchorMax = newAnchorsMax;
@@ -72,7 +74,9 @@ namespace UnityEngine.UI.Extensions
                 t.offsetMin = new Vector2(-t.offsetMax.x, t.offsetMin.y);
                 t.offsetMax = new Vector2(-oldOffsetMin.x, t.offsetMax.y);
 
-                t.localScale = new Vector3(-t.localScale.x, t.localScale.y, t.localScale.z);
+                var localScale = t.localScale;
+                localScale = new Vector3(-localScale.x, localScale.y, localScale.z);
+                t.localScale = localScale;
             }
         }
 
@@ -99,16 +103,20 @@ namespace UnityEngine.UI.Extensions
 
                 if (mirrorAnchors)
                 {
-                    Vector2 oldAnchorMin = t.anchorMin;
-                    t.anchorMin = new Vector2(t.anchorMin.x, 1 - t.anchorMax.y);
+                    var anchorMin = t.anchorMin;
+                    Vector2 oldAnchorMin = anchorMin;
+                    t.anchorMin = new Vector2(anchorMin.x, 1 - t.anchorMax.y);
                     t.anchorMax = new Vector2(t.anchorMax.x, 1 - oldAnchorMin.y);
                 }
 
-                Vector2 oldOffsetMin = t.offsetMin;
-                t.offsetMin = new Vector2(t.offsetMin.x, -t.offsetMax.y);
+                var offsetMin = t.offsetMin;
+                Vector2 oldOffsetMin = offsetMin;
+                t.offsetMin = new Vector2(offsetMin.x, -t.offsetMax.y);
                 t.offsetMax = new Vector2(t.offsetMax.x, -oldOffsetMin.y);
 
-                t.localScale = new Vector3(t.localScale.x, -t.localScale.y, t.localScale.z);
+                var localScale = t.localScale;
+                localScale = new Vector3(localScale.x, -localScale.y, localScale.z);
+                t.localScale = localScale;
             }
         }
     }
