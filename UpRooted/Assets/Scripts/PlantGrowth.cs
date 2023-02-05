@@ -6,6 +6,7 @@ public class PlantGrowth : MonoBehaviour
 {
 
     public Vector3 currentScale;
+    private Vector3 startingScale;
 
     public Vector3 maxScale;
 
@@ -23,13 +24,14 @@ public class PlantGrowth : MonoBehaviour
 
     void Awake()
     {
-        currentScale = Vector3.zero;
+        startingScale = transform.localScale; // Store the starting scale
+        transform.localScale = Vector3.zero;
     }
 
-    void OnEnable()
-    {
-        currentScale = Vector3.zero;
-    }
+    //void OnEnable()
+    //{
+    //    currentScale = Vector3.zero;
+    //}
 
     private void Update()
     {
