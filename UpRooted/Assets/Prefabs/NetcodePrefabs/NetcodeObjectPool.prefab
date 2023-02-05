@@ -61,4 +61,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21e37f4c6919a4f3b8a79adf7e08824a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PooledPrefabsList: []
+  PooledPrefabsList:
+  - Prefab: {fileID: 1454533747576084390, guid: 7d0053247e3a848a193e17a82d99bc08, type: 3}
+    PrewarmCount: 1
+  - Prefab: {fileID: 1454533747576084390, guid: cc92e3e827303704799efd7ef2a1b963, type: 3}
+    PrewarmCount: 1
