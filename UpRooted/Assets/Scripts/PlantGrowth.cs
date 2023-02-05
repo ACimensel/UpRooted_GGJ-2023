@@ -5,22 +5,26 @@ using UnityEngine;
 public class PlantGrowth : MonoBehaviour
 {
 
-    [Header("Current scale")]
     public Vector3 currentScale;
 
-    [Header("Max scale")]
     public Vector3 maxScale;
 
-    [Header("Scaling Speed")]
     public Vector3 growthSpeed;
 
     //[SerializeField] float growthSpeed = 5f;
     //[SerializeField] int finalGrowthStage = 100;
     //[SerializeField] int currentGrowthStage = 0;
 
+    [SerializeField] ParticleSystem readyParticles;
+
     public bool fullyGrown;
     //[SerializeField] AudioSource audioSource;
     //[SerializeField] AudioClip audioClip;
+
+    void Awake()
+    {
+        currentScale = Vector3.zero;
+    }
 
     void OnEnable()
     {
@@ -29,22 +33,29 @@ public class PlantGrowth : MonoBehaviour
 
     private void Update()
     {
-        if(currentScale.magnitude <= maxScale.magnitude)
+        currentScale = transform.localScale;
+
+        if(!fullyGrown && currentScale.magnitude <= maxScale.magnitude)
         {
             UpdateGrowth();
         }
-        else
+        else if(!fullyGrown)
         {
-            fullyGrown = true;
+            FullyGrown();
         }
     }
 
     protected virtual void UpdateGrowth()
     {
-            transform.localScale = transform.localScale + growthSpeed * Time.deltaTime;
-
-
+        transform.localScale = transform.localScale + growthSpeed * Time.deltaTime;
     }
+
+    protected virtual void FullyGrown()
+    {
+        readyParticles.Play();
+        fullyGrown = true;
+    }
+
 
     protected virtual void Initialize()
     {
@@ -58,6 +69,15 @@ public class PlantGrowth : MonoBehaviour
 
     public void Harvest()
     {
+        if (fullyGrown)
+        {
+            print("Harvest");
+        }
+        else
+        {
+            print("HARVESTED TOO EARLY");
+        }
 
+        
     }
 }
