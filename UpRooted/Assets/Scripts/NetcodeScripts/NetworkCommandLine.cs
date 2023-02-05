@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class NetworkCommandLine : MonoBehaviour
 {
-    [SerializeField] private NetworkManager _netManager;
+    [SerializeField] private NetworkManager NetManager;
    
     // Start is called before the first frame update
     void Start()
@@ -18,13 +18,13 @@ public class NetworkCommandLine : MonoBehaviour
             switch (mode)
             {
                 case "server":
-                    _netManager.StartServer();
+                    NetManager.StartServer();
                     break;
                 case "host":
-                    _netManager.StartHost();
+                    NetManager.StartHost();
                     break;
                 case "client":
-                    _netManager.StartClient();
+                    NetManager.StartClient();
                     break;
             }
         }

@@ -5,24 +5,24 @@ using Unity.Netcode;
 
 public class PowerupThrow : MonoBehaviour
 {
-    public Transform projectile; // TODO instantiate
-    public Renderer targetRend;
-    public float firingAngle = 45.0f;
-    public float gravity = 9.8f;
-    [Range(1f, 8f)] public float minDist = 5f;
+    public Transform Projectile; // TODO instantiate
+    public Renderer TargetRend;
+    public float FiringAngle = 45.0f;
+    public float Gravity = 9.8f;
+    [Range(1f, 8f)] public float MinDist = 5f;
 
-    [HideInInspector] public Vector3 targetPos;
-    private float distToThrow;
-    public int throwIncreaseSpeed = 12;
-    private Coroutine coroutine;
+    [HideInInspector] public Vector3 TargetPos;
+    private float _distToThrow;
+    public int ThrowIncreaseSpeed = 12;
+    private Coroutine _coroutine;
 
-    public GameObject heldItem;
-    public GameObject touchingObject;
+    public GameObject HeldItem;
+    public GameObject TouchingObject;
 
 
     void Start()
     {
-        distToThrow = minDist;
+        _distToThrow = MinDist;
     }
 
     void Update()
@@ -33,15 +33,15 @@ public class PowerupThrow : MonoBehaviour
 
     void SetTargetPos()
     {
-        Vector3 v = transform.position + transform.forward * distToThrow;
-        targetPos = new Vector3(v.x, projectile.localScale.y / 2, v.z);
+        Vector3 v = transform.position + transform.forward * _distToThrow;
+        TargetPos = new Vector3(v.x, Projectile.localScale.y / 2, v.z);
     }
 
     void HandleMouseButton()
     {
-        if (coroutine == null)
+        if (_coroutine == null)
         {
-            if(heldItem == null)
+            if(HeldItem == null)
             {
 
 
@@ -50,20 +50,20 @@ public class PowerupThrow : MonoBehaviour
             else if (Input.GetMouseButton(0))
             {
                 Debug.Log("Holding primary button.");
-                targetRend.enabled = true;
-                distToThrow += Time.deltaTime * throwIncreaseSpeed;
+                TargetRend.enabled = true;
+                _distToThrow += Time.deltaTime * ThrowIncreaseSpeed;
             }
             //Throw On Left Mouse Release
             else if (Input.GetMouseButtonUp(0))
             {
                 Debug.Log("Primary button UP.");
-                targetRend.enabled = false;
+                TargetRend.enabled = false;
 
-                distToThrow = minDist;
+                _distToThrow = MinDist;
 
-                if (heldItem != null) 
+                if (HeldItem != null) 
                 {
-                    heldItem.SendMessage("SetTargetPos", targetPos);
+                    HeldItem.SendMessage("SetTargetPos", TargetPos);
 
                     //NetworkObject networkObject = NetcodeObjectPool.Singleton.GetNetworkObject(projectile.gameObject, transform.position, Quaternion.identity);
                     //networkObject.gameObject.SendMessage("SetTargetPos", targetPos);
@@ -72,11 +72,11 @@ public class PowerupThrow : MonoBehaviour
                 }
             }
         }
-        if (Input.GetMouseButtonDown(1) && heldItem != null) 
+        if (Input.GetMouseButtonDown(1) && HeldItem != null) 
         {
             DropItem();
         }
-        else if (Input.GetMouseButtonDown(1) && heldItem == null && touchingObject != null)
+        else if (Input.GetMouseButtonDown(1) && HeldItem == null && TouchingObject != null)
         {
             PickUpItem();
         }
@@ -86,26 +86,26 @@ public class PowerupThrow : MonoBehaviour
     {
         if (other.gameObject.GetComponent<ProjectileMotion>())
         {
-            touchingObject = other.gameObject;
+            TouchingObject = other.gameObject;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        touchingObject = null;
+        TouchingObject = null;
     }
 
     private void PickUpItem()
     {
-        if (touchingObject.TryGetComponent<PlantGrowth>(out PlantGrowth plantGrowth))
+        if (TouchingObject.TryGetComponent<PlantGrowth>(out PlantGrowth plantGrowth))
         {
-            if (plantGrowth.fullyGrown == false)
+            if (plantGrowth.FullyGrown == false)
                 return;
       
             plantGrowth.Harvest();
-            heldItem = touchingObject;
-            heldItem.transform.position = transform.position;
-            heldItem.transform.parent = transform;
+            HeldItem = TouchingObject;
+            HeldItem.transform.position = transform.position;
+            HeldItem.transform.parent = transform;
         }
 
         //ObjectIwantToPickUp.GetComponent<Rigidbody>().isKinematic = true;
@@ -114,8 +114,8 @@ public class PowerupThrow : MonoBehaviour
 
     private void DropItem()
     {
-        heldItem.transform.parent = null;
-        heldItem = null;
-        touchingObject = null;//???
+        HeldItem.transform.parent = null;
+        HeldItem = null;
+        TouchingObject = null;//???
     }
 }

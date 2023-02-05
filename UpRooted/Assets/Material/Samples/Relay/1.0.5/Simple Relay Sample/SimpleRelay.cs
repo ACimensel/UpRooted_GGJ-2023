@@ -42,15 +42,15 @@ public class SimpleRelay : MonoBehaviour
     /// </summary>
     public Text PlayerAllocationIdText;
 
-    Guid hostAllocationId;
-    Guid playerAllocationId;
-    string allocationRegion = "";
-    string joinCode = "n/a";
-    string playerId = "Not signed in";
-    string autoSelectRegionName = "auto-select (QoS)";
-    int regionAutoSelectIndex = 0;
-    List<Region> regions = new List<Region>();
-    List<string> regionOptions = new List<string>();
+    Guid _hostAllocationId;
+    Guid _playerAllocationId;
+    string _allocationRegion = "";
+    string _joinCode = "n/a";
+    string _playerId = "Not signed in";
+    string _autoSelectRegionName = "auto-select (QoS)";
+    int _regionAutoSelectIndex = 0;
+    List<Region> _regions = new List<Region>();
+    List<string> _regionOptions = new List<string>();
 
 
     async void Start()
@@ -62,22 +62,22 @@ public class SimpleRelay : MonoBehaviour
 
     void UpdateUI()
     {
-        PlayerIdText.text = playerId;
-        RegionsDropdown.interactable = regions.Count > 0;
+        PlayerIdText.text = _playerId;
+        RegionsDropdown.interactable = _regions.Count > 0;
         RegionsDropdown.options?.Clear();
-        RegionsDropdown.AddOptions(new List<string> {autoSelectRegionName});  // index 0 is always auto-select (use QoS)
-        RegionsDropdown.AddOptions(regionOptions);
-        if (!String.IsNullOrEmpty(allocationRegion))
+        RegionsDropdown.AddOptions(new List<string> {_autoSelectRegionName});  // index 0 is always auto-select (use QoS)
+        RegionsDropdown.AddOptions(_regionOptions);
+        if (!String.IsNullOrEmpty(_allocationRegion))
         {
-            if (regionOptions.Count == 0)
+            if (_regionOptions.Count == 0)
             {
-                RegionsDropdown.AddOptions(new List<String>(new[] { allocationRegion }));
+                RegionsDropdown.AddOptions(new List<String>(new[] { _allocationRegion }));
             }
-            RegionsDropdown.value = RegionsDropdown.options.FindIndex(option => option.text == allocationRegion);
+            RegionsDropdown.value = RegionsDropdown.options.FindIndex(option => option.text == _allocationRegion);
         }
-        HostAllocationIdText.text = hostAllocationId.ToString();
-        JoinCodeText.text = joinCode;
-        PlayerAllocationIdText.text = playerAllocationId.ToString();
+        HostAllocationIdText.text = _hostAllocationId.ToString();
+        JoinCodeText.text = _joinCode;
+        PlayerAllocationIdText.text = _playerAllocationId.ToString();
     }
 
     /// <summary>
@@ -86,9 +86,9 @@ public class SimpleRelay : MonoBehaviour
     public async void OnSignIn()
     {
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        playerId = AuthenticationService.Instance.PlayerId;
+        _playerId = AuthenticationService.Instance.PlayerId;
 
-        Debug.Log($"Signed in. Player ID: {playerId}");
+        Debug.Log($"Signed in. Player ID: {_playerId}");
         UpdateUI();
     }
 
@@ -99,13 +99,13 @@ public class SimpleRelay : MonoBehaviour
     {
         Debug.Log("Host - Getting regions.");
         var allRegions = await RelayService.Instance.ListRegionsAsync();
-        regions.Clear();
-        regionOptions.Clear();
+        _regions.Clear();
+        _regionOptions.Clear();
         foreach (var region in allRegions)
         {
             Debug.Log(region.Id + ": " + region.Description);
-            regionOptions.Add(region.Id);
-            regions.Add(region);
+            _regionOptions.Add(region.Id);
+            _regions.Add(region);
         }
         UpdateUI();
     }
@@ -119,14 +119,14 @@ public class SimpleRelay : MonoBehaviour
 
         // Determine region to use (user-selected or auto-select/QoS)
         string region = GetRegionOrQosDefault();
-        Debug.Log($"The chosen region is: {region ?? autoSelectRegionName}");
+        Debug.Log($"The chosen region is: {region ?? _autoSelectRegionName}");
 
         // Important: Once the allocation is created, you have ten seconds to BIND
         Allocation allocation = await RelayService.Instance.CreateAllocationAsync(4, region);
-        hostAllocationId = allocation.AllocationId;
-        allocationRegion = allocation.Region;
+        _hostAllocationId = allocation.AllocationId;
+        _allocationRegion = allocation.Region;
 
-        Debug.Log($"Host Allocation ID: {hostAllocationId}, region: {allocationRegion}");
+        Debug.Log($"Host Allocation ID: {_hostAllocationId}, region: {_allocationRegion}");
 
         UpdateUI();
     }
@@ -134,12 +134,12 @@ public class SimpleRelay : MonoBehaviour
     string GetRegionOrQosDefault()
     {
         // Return null (indicating to auto-select the region/QoS) if regions list is empty OR auto-select/QoS is chosen
-        if (!regions.Any() || RegionsDropdown.value == regionAutoSelectIndex)
+        if (!_regions.Any() || RegionsDropdown.value == _regionAutoSelectIndex)
         {
             return null;
         }
         // else use chosen region (offset -1 in dropdown due to first option being auto-select/QoS)
-        return regions[RegionsDropdown.value - 1].Id;
+        return _regions[RegionsDropdown.value - 1].Id;
     }
 
     /// <summary>
@@ -151,8 +151,8 @@ public class SimpleRelay : MonoBehaviour
 
         try
         {
-            joinCode = await RelayService.Instance.GetJoinCodeAsync(hostAllocationId);
-            Debug.Log("Host - Got join code: " + joinCode);
+            _joinCode = await RelayService.Instance.GetJoinCodeAsync(_hostAllocationId);
+            Debug.Log("Host - Got join code: " + _joinCode);
         }
         catch (RelayServiceException ex)
         {
@@ -171,9 +171,9 @@ public class SimpleRelay : MonoBehaviour
 
         try
         {
-            var joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
-            playerAllocationId = joinAllocation.AllocationId;
-            Debug.Log("Player Allocation ID: " + playerAllocationId);
+            var joinAllocation = await RelayService.Instance.JoinAllocationAsync(_joinCode);
+            _playerAllocationId = joinAllocation.AllocationId;
+            Debug.Log("Player Allocation ID: " + _playerAllocationId);
         }
         catch (RelayServiceException ex)
         {

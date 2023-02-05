@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class ProjectileMotion : MonoBehaviour
 {
-    public float firingAngle = 45.0f;
-    public float gravity = 9.8f;
+    public float FiringAngle = 45.0f;
+    public float Gravity = 9.8f;
 
-    private Vector3 targetPos;
-    private Coroutine coroutine;
+    private Vector3 _targetPos;
+    private Coroutine _coroutine;
 
     public void SetTargetPos(Vector3 pos)
     {
-        targetPos = pos;
-        if (coroutine != null) StopCoroutine(coroutine);
-        StartCoroutine(Simulateprojectile(targetPos));
+        _targetPos = pos;
+        if (_coroutine != null) StopCoroutine(_coroutine);
+        StartCoroutine(Simulateprojectile(_targetPos));
     }
 
     IEnumerator Simulateprojectile(Vector3 targPos)
@@ -23,24 +23,24 @@ public class ProjectileMotion : MonoBehaviour
         float targetDist = Vector3.Distance(transform.position, targPos);
 
         // Calculate the velocity needed to throw the object to the target at specified angle
-        float projectileVel = targetDist / (Mathf.Sin(2 * firingAngle * Mathf.Deg2Rad) / gravity);
+        float projectileVel = targetDist / (Mathf.Sin(2 * FiringAngle * Mathf.Deg2Rad) / Gravity);
 
         // Extract the X  Y componenent of the velocity
-        float Vx = Mathf.Sqrt(projectileVel) * Mathf.Cos(firingAngle * Mathf.Deg2Rad);
-        float Vy = Mathf.Sqrt(projectileVel) * Mathf.Sin(firingAngle * Mathf.Deg2Rad);
+        float vx = Mathf.Sqrt(projectileVel) * Mathf.Cos(FiringAngle * Mathf.Deg2Rad);
+        float vy = Mathf.Sqrt(projectileVel) * Mathf.Sin(FiringAngle * Mathf.Deg2Rad);
 
         // Calculate flight time
-        float flightDuration = targetDist / Vx;
+        float flightDuration = targetDist / vx;
 
         // Rotate projectile to face the target
         transform.rotation = Quaternion.LookRotation(targPos - transform.position);
 
-        float elapse_time = 0;
-        while (elapse_time < flightDuration)
+        float elapseTime = 0;
+        while (elapseTime < flightDuration)
         {
-            transform.Translate(0, (Vy - (gravity * elapse_time)) * Time.deltaTime, Vx * Time.deltaTime);
+            transform.Translate(0, (vy - (Gravity * elapseTime)) * Time.deltaTime, vx * Time.deltaTime);
 
-            elapse_time += Time.deltaTime;
+            elapseTime += Time.deltaTime;
 
             yield return null;
         }

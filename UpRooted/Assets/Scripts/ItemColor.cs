@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ItemColor : PlantGrowth
 {
-    [SerializeField] private Color color;
-    [SerializeField] MeshRenderer meshRenderer;
+    [SerializeField] private Color Color;
+    [SerializeField] MeshRenderer MeshRenderer;
 
     protected override void Initialize()
     {
-        meshRenderer.material.color = color;
+        MeshRenderer.material.color = Color;
         base.Initialize();
     }
 

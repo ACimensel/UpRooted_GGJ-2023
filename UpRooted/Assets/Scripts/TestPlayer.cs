@@ -5,23 +5,23 @@ using UnityEngine;
 
 public class TestPlayer : MonoBehaviour
 {
-    float horizontal, vertical;
-    [SerializeField] float speed = 5f;
+    float _horizontal, _vertical;
+    [SerializeField] float Speed = 5f;
 
-    [SerializeField] Rigidbody rb;
-    [SerializeField] GameObject itemPrefab;
-    [SerializeField] Transform itemStartTransform;
+    [SerializeField] Rigidbody Rb;
+    [SerializeField] GameObject ItemPrefab;
+    [SerializeField] Transform ItemStartTransform;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        Rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
-        vertical = Input.GetAxisRaw("Vertical");
+        _horizontal = Input.GetAxisRaw("Horizontal");
+        _vertical = Input.GetAxisRaw("Vertical");
 
         if (Input.GetButtonDown("Fire1"))
         {
@@ -32,12 +32,12 @@ public class TestPlayer : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector3(horizontal * speed, vertical * speed);
+        Rb.velocity = new Vector3(_horizontal * Speed, _vertical * Speed);
     }
 
     void Fire()
     {
-        NetworkObject networkObject = NetcodeObjectPool.Singleton.GetNetworkObject(itemPrefab, itemStartTransform.position, Quaternion.identity);
+        NetworkObject networkObject = NetcodeObjectPool.Singleton.GetNetworkObject(ItemPrefab, ItemStartTransform.position, Quaternion.identity);
        
     }
 }
