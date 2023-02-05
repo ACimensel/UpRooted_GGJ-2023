@@ -58,6 +58,8 @@ public class NetMenuManager : MonoBehaviour
 
     [SerializeField] private TMP_Text JoinCodeOutput;
 
+    [SerializeField] private CountDownUI GameStartCountdown;
+        
     private bool _interactable = true;
     
     // GUI vars
@@ -336,11 +338,11 @@ public class NetMenuManager : MonoBehaviour
     }
     
 #endregion
-    
 
     private void HideAll()
     {
         _interactable = true;
+        GameStartCountdown.gameObject.SetActive(true);
         gameObject.SetActive(false);
     }
     

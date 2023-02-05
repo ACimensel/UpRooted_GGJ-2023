@@ -104,7 +104,7 @@ public class PowerupThrow : NetworkBehaviour
 
             //plantGrowth.Harvest();
             HeldItem = TouchingObject;
-            HeldItem.transform.position = transform.position;
+            HeldItem.transform.position = transform.position; 
             HeldItem.transform.parent = transform;
         }
 

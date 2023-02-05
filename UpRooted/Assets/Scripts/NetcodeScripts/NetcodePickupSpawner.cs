@@ -38,11 +38,11 @@ public class NetcodePickupSpawner : NetworkBehaviour
         CanSpawn = true;
         for (int i = 0; i < StartingItems; i++)
         {
-            SpawnNewItem(true);
+            SpawnNewItem();
         }
     }
     
-    private void SpawnNewItem(bool startsGrown)
+    private void SpawnNewItem()
     {
         if (!CanSpawn) return;
         // Left side & right side spawn
@@ -56,14 +56,6 @@ public class NetcodePickupSpawner : NetworkBehaviour
 
         plusNetworkObject.Spawn();
         negNetworkObject.Spawn();
-        
-        if (startsGrown)
-        {
-            plusNetworkObject.gameObject.SetActive(true);
-            negNetworkObject.gameObject.SetActive(true);
-            plusNetworkObject.GetComponent<PlantGrowth>().OnFullyGrown();
-            negNetworkObject.GetComponent<PlantGrowth>().OnFullyGrown();
-        }
     }
     
     // Returns a point within the play area
@@ -86,7 +78,7 @@ public class NetcodePickupSpawner : NetworkBehaviour
         if (_spawnTimer > SpawnInterval)
         {
             _spawnTimer = 0.0f;
-            SpawnNewItem(false);
+            SpawnNewItem();
         }
     }
 }
