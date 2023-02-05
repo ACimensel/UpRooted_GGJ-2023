@@ -5,7 +5,6 @@ using UnityEngine;
 public class ItemColor : PlantGrowth
 {
     [SerializeField] private Color Color;
-    [SerializeField] MeshRenderer MeshRenderer;
 
     protected override void Initialize()
     {
