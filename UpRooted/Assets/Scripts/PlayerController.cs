@@ -7,10 +7,12 @@ public class PlayerController : MonoBehaviour
     public Camera playerCamera;
 
     private int speed = 10;
+    private Rigidbody rb;
 
     private void Awake()
     {
         playerCamera = Camera.main;
+        rb = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -23,6 +25,8 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         transform.position += movement * speed * Time.deltaTime;
+        
+        // rb.velocity = movement * speed * Time.deltaTime;
     }
 
     void RotatePlayer()
