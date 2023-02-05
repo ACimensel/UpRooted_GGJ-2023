@@ -59,8 +59,9 @@ public class PlantGrowth : MonoBehaviour
         transform.localScale = transform.localScale + GrowthSpeed * Time.deltaTime;
     }
 
-    protected virtual void OnFullyGrown()
+    public virtual void OnFullyGrown()
     {
+        transform.localScale = MaxScale;
         ReadyParticles.Play();
         FullyGrown = true;
     }
