@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestSounds : MonoBehaviour
+public class TestLoopingSounds : MonoBehaviour
 {
     public AudioClip FarmMusic;
     void Start() {
-        SoundManager.Instance.PlayMusic(FarmMusic);
+        SoundManager.Instance.PlayLoop(FarmMusic);
     }
 }

@@ -5,8 +5,8 @@ using UnityEngine;
 public class SoundManager : MonoBehaviour
 {
     // Audio players components.
-	public AudioSource EffectsSource;
-	public AudioSource MusicSource;
+	public AudioSource AudioEffectsSource;
+	public AudioSource LoopingAudioSource;
 	// Random pitch adjustment range.
 	// // public float LowPitchRange = .95f;
 	// // public float HighPitchRange = 1.05f;
@@ -29,18 +29,18 @@ public class SoundManager : MonoBehaviour
 		//Set SoundManager to DontDestroyOnLoad so that it won't be destroyed when reloading our scene.
 		DontDestroyOnLoad (gameObject);
 	}
-	// Play a single clip through the sound effects source.
+	//Play simple sound effect
 	public void Play(AudioClip clip)
 	{
-		EffectsSource.clip = clip;
-		EffectsSource.Play();
+		AudioEffectsSource.clip = clip;
+		AudioEffectsSource.Play();
 	}
-	// Play a single clip through the music source.
-	public void PlayMusic(AudioClip clip)
+	//Play looping audio
+	public void PlayLoop(AudioClip clip)
 	{
-		MusicSource.clip = clip;
-		MusicSource.loop = true;
-		MusicSource.Play();
+		LoopingAudioSource.clip = clip;
+		LoopingAudioSource.loop = true;
+		LoopingAudioSource.Play();
 	}
 	// Play a random clip from an array, and randomize the pitch slightly.
 	// // public void RandomSoundEffect(params AudioClip[] clips)
