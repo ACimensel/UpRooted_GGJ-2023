@@ -41,8 +41,18 @@ public class PowerupThrow : MonoBehaviour
     {
         if (coroutine == null)
         {
+            if(heldItem == null)
+            {
+                if(touchingObject.TryGetComponent<PlantGrowth>(out PlantGrowth plantGrowth))
+                {
+                    plantGrowth.Harvest();
+                    heldItem = touchingObject;
+                    print("touching plantgrowth");
+                }
+
+            }
             //Charge throw On Left Mouse Down
-            if (Input.GetMouseButton(0))
+            else if (Input.GetMouseButton(0))
             {
                 Debug.Log("Holding primary button.");
                 targetRend.enabled = true;
@@ -51,8 +61,6 @@ public class PowerupThrow : MonoBehaviour
             //Throw On Left Mouse Release
             else if (Input.GetMouseButtonUp(0))
             {
-
-
                 Debug.Log("Primary button UP.");
                 targetRend.enabled = false;
 
