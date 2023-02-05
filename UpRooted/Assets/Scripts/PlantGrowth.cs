@@ -1,9 +1,16 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlantGrowth : MonoBehaviour
 {
+    public bool isBad;
+    public MeshRenderer meshRenderer;
+    public Material goodMaterial;
+    public Material badMaterial;
+
+
 
     public Vector3 currentScale;
     private Vector3 startingScale;
@@ -68,6 +75,27 @@ public class PlantGrowth : MonoBehaviour
     {
 
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent<PlantGrowth>(out PlantGrowth plantGrowth))
+        {
+            if (plantGrowth.isBad)//if other plant is bad, make this plant bad
+            {
+                this.isBad = true;
+                meshRenderer.material = badMaterial;
+            }
+        }
+    }
+
+    //public void BadCheck()
+    //{
+    //    if (isBad)
+    //    {
+    //        meshRenderer.material = badMaterial;
+    //    }
+
+    //}
 
     public void Harvest()
     {

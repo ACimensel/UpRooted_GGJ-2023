@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3106302542659827095}
   - component: {fileID: 3384466688594490925}
   m_Layer: 0
-  m_Name: EvilPlant Grown Particles
+  m_Name: GoodPlant Grown Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -106,7 +106,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -222,8 +222,8 @@ ParticleSystem:
     startColor:
       serializedVersion: 2
       minMaxState: 2
-      minColor: {r: 0.93333334, g: 0.19400199, b: 0.13725486, a: 1}
-      maxColor: {r: 0.2827051, g: 0.10588236, b: 0.83137256, a: 1}
+      minColor: {r: 0.93333334, g: 0.66152346, b: 0.13725486, a: 1}
+      maxColor: {r: 0.10588236, g: 0.83137256, b: 0.3419426, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}

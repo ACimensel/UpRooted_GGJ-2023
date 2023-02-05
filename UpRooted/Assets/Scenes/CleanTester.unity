@@ -18172,7 +18172,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4323495825281706518, guid: 1e07e0d0d8b5a4de9a0b9db1b15094af, type: 3}
       propertyPath: CanSpawn
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4323495825281706519, guid: 1e07e0d0d8b5a4de9a0b9db1b15094af, type: 3}
       propertyPath: m_RootOrder
