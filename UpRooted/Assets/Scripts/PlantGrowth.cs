@@ -44,11 +44,11 @@ public class PlantGrowth : MonoBehaviour
     {
         CurrentScale = transform.localScale;
 
-        if(!FullyGrown && CurrentScale.magnitude <= MaxScale.magnitude)
+        if (!FullyGrown && CurrentScale.magnitude <= MaxScale.magnitude)
         {
             UpdateGrowth();
         }
-        else if(!FullyGrown)
+        else if (!FullyGrown)
         {
             OnFullyGrown();
         }
@@ -64,6 +64,7 @@ public class PlantGrowth : MonoBehaviour
         transform.localScale = MaxScale;
         ReadyParticles.Play();
         FullyGrown = true;
+        ScoreCounterManager.Singleton.Count();
     }
 
 
@@ -79,36 +80,41 @@ public class PlantGrowth : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        ScoreCounterManager.Singleton.Count();
         if (other.TryGetComponent<PlantGrowth>(out PlantGrowth plantGrowth))
         {
-            if (plantGrowth.IsBad)//if other plant is bad, make this plant bad
+            if (plantGrowth.IsBad && !this.IsBad)//if other plant is bad, make this plant bad
             {
-                this.IsBad = true;
-                MeshRenderer.material = BadMaterial;
+
+                Corrupt();
+            }
+            else if (this.IsBad && !plantGrowth.IsBad)
+            {
+
+                plantGrowth.Corrupt();
             }
         }
     }
 
-    //public void BadCheck()
+    public void Corrupt()
+    {
+        this.IsBad = true;
+        MeshRenderer.material = BadMaterial;
+        gameObject.layer = LayerMask.NameToLayer("Bad");
+        ScoreCounterManager.Singleton.Count();
+    }
+
+    //public void Harvest()
     //{
-    //    if (isBad)
+    //    if (FullyGrown)
     //    {
-    //        meshRenderer.material = badMaterial;
+    //        print("Harvest");
+    //    }
+    //    else
+    //    {
+    //        print("HARVESTED TOO EARLY");
     //    }
 
+
     //}
-
-    public void Harvest()
-    {
-        if (FullyGrown)
-        {
-            print("Harvest");
-        }
-        else
-        {
-            print("HARVESTED TOO EARLY");
-        }
-
-        
-    }
 }
