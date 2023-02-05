@@ -53,4 +53,9 @@ public class NetcodePlayer : NetworkBehaviour
         // Set the local game object's position to the network confirmed Position
         transform.position = Position.Value;
     }
+
+    public void ParentToPlayer(GameObject heldItem)
+    {
+        heldItem.transform.SetParent(gameObject.transform);
+    }
 }

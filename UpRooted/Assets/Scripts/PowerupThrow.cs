@@ -43,12 +43,7 @@ public class PowerupThrow : MonoBehaviour
         {
             if(heldItem == null)
             {
-                if(touchingObject.TryGetComponent<PlantGrowth>(out PlantGrowth plantGrowth))
-                {
-                    plantGrowth.Harvest();
-                    heldItem = touchingObject;
-                    print("touching plantgrowth");
-                }
+
 
             }
             //Charge throw On Left Mouse Down
@@ -102,10 +97,19 @@ public class PowerupThrow : MonoBehaviour
 
     private void PickUpItem()
     {
+        if (touchingObject.TryGetComponent<PlantGrowth>(out PlantGrowth plantGrowth))
+        {
+            if (plantGrowth.fullyGrown == false)
+                return;
+      
+            plantGrowth.Harvest();
+            heldItem = touchingObject;
+            heldItem.transform.position = transform.position;
+            heldItem.transform.parent = transform;
+        }
+
         //ObjectIwantToPickUp.GetComponent<Rigidbody>().isKinematic = true;
-        heldItem = touchingObject;
-        heldItem.transform.position = transform.position;
-        heldItem.transform.parent = transform;
+
     }
 
     private void DropItem()

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Netcode;
 using Unity.Networking.Transport;
@@ -160,14 +161,19 @@ public class NetMenuManager : MonoBehaviour
 
     private async void DoSignIn(ConnectionState nextState)
     {
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        _playerId = AuthenticationService.Instance.PlayerId;
+        if (_playerId == "Not signed in")
+        {
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            _playerId = AuthenticationService.Instance.PlayerId;
 
-        Debug.Log($"Signed in. Player ID: {_playerId}");
-        
+            Debug.Log($"Signed in. Player ID: {_playerId}");
+        }
+
         HandleMenuState(nextState);
     }
+    
     #region Host_UTP
+    
     /// <summary>
     /// Event handler for when the Get Regions button is clicked.
     /// </summary>
@@ -243,18 +249,16 @@ public class NetMenuManager : MonoBehaviour
         if (_hostDriver.Bind(NetworkEndPoint.AnyIpv4) != 0)
         {
             Debug.LogError("Host client failed to bind");
+            return;
         }
-        else
+
+        if (_hostDriver.Listen() != 0)
         {
-            if (_hostDriver.Listen() != 0)
-            {
-                Debug.LogError("Host client failed to listen");
-            }
-            else
-            {
-                Debug.Log("Host client bound to Relay server");
-            }
+            Debug.LogError("Host client failed to listen");
+            return;
         }
+
+        Debug.Log("Host client bound to Relay server");
 
         HandleMenuState(ConnectionState.GetJoinCode);
     }
@@ -274,15 +278,39 @@ public class NetMenuManager : MonoBehaviour
         catch (RelayServiceException ex)
         {
             Debug.LogError(ex.Message + "\n" + ex.StackTrace);
+            return;
         }
         
         HandleMenuState(ConnectionState.InGame);
     }
+    
+    /// <summary>
+    /// Event handler for when the DisconnectPlayers (UTP) button is clicked.
+    /// </summary>
+    public void OnDisconnectPlayers()
+    {
+        if (_serverConnections.Length == 0)
+        {
+            Debug.LogError("No players connected to disconnect.");
+            return;
+        }
+
+        // In this sample, we will simply disconnect all connected clients.
+        for (int i = 0; i < _serverConnections.Length; i++)
+        {
+            // This sends a disconnect event to the destination client,
+            // letting them know they are disconnected from the Host.
+            _hostDriver.Disconnect(_serverConnections[i]);
+
+            // Here, we set the destination client's NetworkConnection to the default value.
+            // It will be recognized in the Host's Update loop as a stale connection, and be removed.
+            _serverConnections[i] = default;
+        }
+    }
     #endregion
     
 #region Client_UTP
-    
-        
+
     /// <summary>
     /// Event handler for when the Join button is clicked.
     /// </summary>
@@ -305,6 +333,7 @@ public class NetMenuManager : MonoBehaviour
         catch (RelayServiceException ex)
         {
             Debug.LogError(ex.Message + "\n" + ex.StackTrace);
+            return;
         }
         
         HandleMenuState(ConnectionState.BindToHost);
@@ -332,11 +361,10 @@ public class NetMenuManager : MonoBehaviour
         if (_playerDriver.Bind(NetworkEndPoint.AnyIpv4) != 0)
         {
             Debug.LogError("Player client failed to bind");
+            return;
         }
-        else
-        {
-            Debug.Log("Player client bound to Relay server");
-        }
+
+        Debug.Log("Player client bound to Relay server");
 
         HandleMenuState(ConnectionState.ConnectToHost);
     }
@@ -352,6 +380,19 @@ public class NetMenuManager : MonoBehaviour
         _clientConnection = _playerDriver.Connect();
         
         HandleMenuState(ConnectionState.InGame);
+    }
+    
+    /// <summary>
+    /// Event handler for when the Disconnect (UTP) button is clicked.
+    /// </summary>
+    public void OnDisconnect()
+    {
+        // This sends a disconnect event to the Host client,
+        // letting them know they are disconnecting.
+        _playerDriver.Disconnect(_clientConnection);
+
+        // We remove the reference to the current connection by overriding it.
+        _clientConnection = default(NetworkConnection);
     }
 
 #endregion
