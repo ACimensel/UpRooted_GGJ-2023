@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CleanTester.unity
     guid: 14764127589fe4d849a6f13d9223e661
+  - enabled: 1
+    path: Assets/Scenes/ScratchScene.unity
+    guid: b858cac9586a042df8e4383276cd47f1
   m_configObjects: {}
