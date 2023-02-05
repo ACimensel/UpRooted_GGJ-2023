@@ -118,28 +118,28 @@ public class SimpleRelayUtp : MonoBehaviour
     public Text PlayerMessageReceivedText;
 
     // GUI vars
-    string joinCode = "n/a";
-    string playerId = "Not signed in";
-    string autoSelectRegionName = "auto-select (QoS)";
-    int regionAutoSelectIndex = 0;
-    List<Region> regions = new List<Region>();
-    List<string> regionOptions = new List<string>();
-    string hostLatestMessageReceived;
-    string playerLatestMessageReceived;
+    string _joinCode = "n/a";
+    string _playerId = "Not signed in";
+    string _autoSelectRegionName = "auto-select (QoS)";
+    int _regionAutoSelectIndex = 0;
+    List<Region> _regions = new List<Region>();
+    List<string> _regionOptions = new List<string>();
+    string _hostLatestMessageReceived;
+    string _playerLatestMessageReceived;
 
     // Allocation response objects
-    Allocation hostAllocation;
-    JoinAllocation playerAllocation;
+    Allocation _hostAllocation;
+    JoinAllocation _playerAllocation;
 
     // Control vars
-    bool isHost;
-    bool isPlayer;
+    bool _isHost;
+    bool _isPlayer;
 
     // UTP vars
-    NetworkDriver hostDriver;
-    NetworkDriver playerDriver;
-    NativeList<NetworkConnection> serverConnections;
-    NetworkConnection clientConnection;
+    NetworkDriver _hostDriver;
+    NetworkDriver _playerDriver;
+    NativeList<NetworkConnection> _serverConnections;
+    NetworkConnection _clientConnection;
 
     async void Start()
     {
@@ -172,12 +172,12 @@ public class SimpleRelayUtp : MonoBehaviour
 
     void Update()
     {
-        if (isHost)
+        if (_isHost)
         {
             UpdateHost();
             UpdateHostUI();
         }
-        else if (isPlayer)
+        else if (_isPlayer)
         {
             UpdatePlayer();
             UpdatePlayerUI();
@@ -187,47 +187,47 @@ public class SimpleRelayUtp : MonoBehaviour
     void OnDestroy()
     {
         // Cleanup objects upon exit
-        if (isHost)
+        if (_isHost)
         {
-            hostDriver.Dispose();
-            serverConnections.Dispose();
+            _hostDriver.Dispose();
+            _serverConnections.Dispose();
         }
-        else if (isPlayer)
+        else if (_isPlayer)
         {
-            playerDriver.Dispose();
+            _playerDriver.Dispose();
         }
     }
 
     void UpdateHostUI()
     {
-        HostPlayerIdText.text = playerId;
-        RegionsDropdown.interactable = regions.Count > 0;
+        HostPlayerIdText.text = _playerId;
+        RegionsDropdown.interactable = _regions.Count > 0;
         RegionsDropdown.options?.Clear();
-        RegionsDropdown.AddOptions(new List<string> {autoSelectRegionName});  // index 0 is always auto-select (use QoS)
-        RegionsDropdown.AddOptions(regionOptions);
-        if (!String.IsNullOrEmpty(hostAllocation?.Region))
+        RegionsDropdown.AddOptions(new List<string> {_autoSelectRegionName});  // index 0 is always auto-select (use QoS)
+        RegionsDropdown.AddOptions(_regionOptions);
+        if (!String.IsNullOrEmpty(_hostAllocation?.Region))
         {
-            if (regionOptions.Count == 0)
+            if (_regionOptions.Count == 0)
             {
-                RegionsDropdown.AddOptions(new List<String>(new[] { hostAllocation.Region }));
+                RegionsDropdown.AddOptions(new List<String>(new[] { _hostAllocation.Region }));
             }
-            RegionsDropdown.value = RegionsDropdown.options.FindIndex(option => option.text == hostAllocation.Region);
+            RegionsDropdown.value = RegionsDropdown.options.FindIndex(option => option.text == _hostAllocation.Region);
         }
-        HostAllocationIdText.text = hostAllocation?.AllocationId.ToString();
-        JoinCodeText.text = joinCode;
-        HostBoundText.text = hostDriver.IsCreated ? hostDriver.Bound.ToString() : false.ToString();
-        HostConnectedPlayersText.text = serverConnections.IsCreated ? serverConnections.Length.ToString() : 0.ToString();
-        HostMessageReceivedText.text = hostLatestMessageReceived;
+        HostAllocationIdText.text = _hostAllocation?.AllocationId.ToString();
+        JoinCodeText.text = _joinCode;
+        HostBoundText.text = _hostDriver.IsCreated ? _hostDriver.Bound.ToString() : false.ToString();
+        HostConnectedPlayersText.text = _serverConnections.IsCreated ? _serverConnections.Length.ToString() : 0.ToString();
+        HostMessageReceivedText.text = _hostLatestMessageReceived;
     }
 
     void UpdatePlayerUI()
     {
-        PlayerPlayerIdText.text = playerId;
-        PlayerAllocationIdText.text = playerAllocation?.AllocationId.ToString();
-        PlayerRegionText.text = playerAllocation?.Region;
-        PlayerBoundText.text = playerDriver.IsCreated ? playerDriver.Bound.ToString() : false.ToString();
-        PlayerConnectedText.text = clientConnection.IsCreated.ToString();
-        PlayerMessageReceivedText.text = playerLatestMessageReceived;
+        PlayerPlayerIdText.text = _playerId;
+        PlayerAllocationIdText.text = _playerAllocation?.AllocationId.ToString();
+        PlayerRegionText.text = _playerAllocation?.Region;
+        PlayerBoundText.text = _playerDriver.IsCreated ? _playerDriver.Bound.ToString() : false.ToString();
+        PlayerConnectedText.text = _clientConnection.IsCreated.ToString();
+        PlayerMessageReceivedText.text = _playerLatestMessageReceived;
     }
 
     /// <summary>
@@ -237,7 +237,7 @@ public class SimpleRelayUtp : MonoBehaviour
     {
         MainMenuPanel.SetActive(false);
         HostPanel.SetActive(true);
-        isHost = true;
+        _isHost = true;
     }
 
     /// <summary>
@@ -247,7 +247,7 @@ public class SimpleRelayUtp : MonoBehaviour
     {
         MainMenuPanel.SetActive(false);
         PlayerPanel.SetActive(true);
-        isPlayer = true;
+        _isPlayer = true;
     }
 
     /// <summary>
@@ -256,9 +256,9 @@ public class SimpleRelayUtp : MonoBehaviour
     public async void OnSignIn()
     {
         await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        playerId = AuthenticationService.Instance.PlayerId;
+        _playerId = AuthenticationService.Instance.PlayerId;
 
-        Debug.Log($"Signed in. Player ID: {playerId}");
+        Debug.Log($"Signed in. Player ID: {_playerId}");
     }
 
     /// <summary>
@@ -268,25 +268,25 @@ public class SimpleRelayUtp : MonoBehaviour
     {
         Debug.Log("Host - Getting regions.");
         var allRegions = await RelayService.Instance.ListRegionsAsync();
-        regions.Clear();
-        regionOptions.Clear();
+        _regions.Clear();
+        _regionOptions.Clear();
         foreach (var region in allRegions)
         {
             Debug.Log(region.Id + ": " + region.Description);
-            regionOptions.Add(region.Id);
-            regions.Add(region);
+            _regionOptions.Add(region.Id);
+            _regions.Add(region);
         }
     }
 
     string GetRegionOrQosDefault()
     {
         // Return null (indicating to auto-select the region/QoS) if regions list is empty OR auto-select/QoS is chosen
-        if (!regions.Any() || RegionsDropdown.value == regionAutoSelectIndex)
+        if (!_regions.Any() || RegionsDropdown.value == _regionAutoSelectIndex)
         {
             return null;
         }
         // else use chosen region (offset -1 in dropdown due to first option being auto-select/QoS)
-        return regions[RegionsDropdown.value - 1].Id;
+        return _regions[RegionsDropdown.value - 1].Id;
     }
 
     /// <summary>
@@ -298,18 +298,18 @@ public class SimpleRelayUtp : MonoBehaviour
 
         // Determine region to use (user-selected or auto-select/QoS)
         string region = GetRegionOrQosDefault();
-        Debug.Log($"The chosen region is: {region ?? autoSelectRegionName}");
+        Debug.Log($"The chosen region is: {region ?? _autoSelectRegionName}");
 
         // Set max connections. Can be up to 100, but note the more players connected, the higher the bandwidth/latency impact.
         int maxConnections = 4;
 
         // Important: Once the allocation is created, you have ten seconds to BIND, else the allocation times out.
-        hostAllocation = await RelayService.Instance.CreateAllocationAsync(maxConnections, region);
-        Debug.Log($"Host Allocation ID: {hostAllocation.AllocationId}, region: {hostAllocation.Region}");
+        _hostAllocation = await RelayService.Instance.CreateAllocationAsync(maxConnections, region);
+        Debug.Log($"Host Allocation ID: {_hostAllocation.AllocationId}, region: {_hostAllocation.Region}");
 
         // Initialize NetworkConnection list for the server (Host).
         // This list object manages the NetworkConnections which represent connected players.
-        serverConnections = new NativeList<NetworkConnection>(maxConnections, Allocator.Persistent);
+        _serverConnections = new NativeList<NetworkConnection>(maxConnections, Allocator.Persistent);
     }
 
     /// <summary>
@@ -320,23 +320,23 @@ public class SimpleRelayUtp : MonoBehaviour
         Debug.Log("Host - Binding to the Relay server using UTP.");
 
         // Extract the Relay server data from the Allocation response.
-        var relayServerData = new RelayServerData(hostAllocation, "udp");
+        var relayServerData = new RelayServerData(_hostAllocation, "udp");
 
         // Create NetworkSettings using the Relay server data.
         var settings = new NetworkSettings();
         settings.WithRelayParameters(ref relayServerData);
 
         // Create the Host's NetworkDriver from the NetworkSettings.
-        hostDriver = NetworkDriver.Create(settings);
+        _hostDriver = NetworkDriver.Create(settings);
 
         // Bind to the Relay server.
-        if (hostDriver.Bind(NetworkEndPoint.AnyIpv4) != 0)
+        if (_hostDriver.Bind(NetworkEndPoint.AnyIpv4) != 0)
         {
             Debug.LogError("Host client failed to bind");
         }
         else
         {
-            if (hostDriver.Listen() != 0)
+            if (_hostDriver.Listen() != 0)
             {
                 Debug.LogError("Host client failed to listen");
             }
@@ -356,8 +356,8 @@ public class SimpleRelayUtp : MonoBehaviour
 
         try
         {
-            joinCode = await RelayService.Instance.GetJoinCodeAsync(hostAllocation.AllocationId);
-            Debug.Log("Host - Got join code: " + joinCode);
+            _joinCode = await RelayService.Instance.GetJoinCodeAsync(_hostAllocation.AllocationId);
+            Debug.Log("Host - Got join code: " + _joinCode);
         }
         catch (RelayServiceException ex)
         {
@@ -381,8 +381,8 @@ public class SimpleRelayUtp : MonoBehaviour
 
         try
         {
-            playerAllocation = await RelayService.Instance.JoinAllocationAsync(JoinCodeInput.text);
-            Debug.Log("Player Allocation ID: " + playerAllocation.AllocationId);
+            _playerAllocation = await RelayService.Instance.JoinAllocationAsync(JoinCodeInput.text);
+            Debug.Log("Player Allocation ID: " + _playerAllocation.AllocationId);
         }
         catch (RelayServiceException ex)
         {
@@ -398,17 +398,17 @@ public class SimpleRelayUtp : MonoBehaviour
         Debug.Log("Player - Binding to the Relay server using UTP.");
 
         // Extract the Relay server data from the Join Allocation response.
-        var relayServerData = new RelayServerData(playerAllocation, "udp");
+        var relayServerData = new RelayServerData(_playerAllocation, "udp");
 
         // Create NetworkSettings using the Relay server data.
         var settings = new NetworkSettings();
         settings.WithRelayParameters(ref relayServerData);
 
         // Create the Player's NetworkDriver from the NetworkSettings object.
-        playerDriver = NetworkDriver.Create(settings);
+        _playerDriver = NetworkDriver.Create(settings);
 
         // Bind to the Relay server.
-        if (playerDriver.Bind(NetworkEndPoint.AnyIpv4) != 0)
+        if (_playerDriver.Bind(NetworkEndPoint.AnyIpv4) != 0)
         {
             Debug.LogError("Player client failed to bind");
         }
@@ -426,7 +426,7 @@ public class SimpleRelayUtp : MonoBehaviour
         Debug.Log("Player - Connecting to Host's client.");
 
         // Sends a connection request to the Host Player.
-        clientConnection = playerDriver.Connect();
+        _clientConnection = _playerDriver.Connect();
     }
 
     /// <summary>
@@ -434,7 +434,7 @@ public class SimpleRelayUtp : MonoBehaviour
     /// </summary>
     public void OnHostSendMessage()
     {
-        if (serverConnections.Length == 0)
+        if (_serverConnections.Length == 0)
         {
             Debug.LogError("No players connected to send messages to.");
             return;
@@ -444,13 +444,13 @@ public class SimpleRelayUtp : MonoBehaviour
         var msg = !String.IsNullOrEmpty(HostMessageInput.text) ? HostMessageInput.text : HostMessageInput.placeholder.GetComponent<Text>().text;
 
         // In this sample, we will simply broadcast a message to all connected clients.
-        for (int i = 0; i < serverConnections.Length; i++)
+        for (int i = 0; i < _serverConnections.Length; i++)
         {
-            if (hostDriver.BeginSend(serverConnections[i], out var writer) == 0)
+            if (_hostDriver.BeginSend(_serverConnections[i], out var writer) == 0)
             {
                 // Send the message. Aside from FixedString32, many different types can be used.
                 writer.WriteFixedString32(msg);
-                hostDriver.EndSend(writer);
+                _hostDriver.EndSend(writer);
             }
         }
     }
@@ -460,7 +460,7 @@ public class SimpleRelayUtp : MonoBehaviour
     /// </summary>
     public void OnPlayerSendMessage()
     {
-        if (!clientConnection.IsCreated)
+        if (!_clientConnection.IsCreated)
         {
             Debug.LogError("Player is not connected. No Host client to send message to.");
             return;
@@ -468,11 +468,11 @@ public class SimpleRelayUtp : MonoBehaviour
 
         // Get message from the input field, or default to the placeholder text.
         var msg = !String.IsNullOrEmpty(PlayerMessageInput.text) ? PlayerMessageInput.text : PlayerMessageInput.placeholder.GetComponent<Text>().text;
-        if (playerDriver.BeginSend(clientConnection, out var writer) == 0)
+        if (_playerDriver.BeginSend(_clientConnection, out var writer) == 0)
         {
             // Send the message. Aside from FixedString32, many different types can be used.
             writer.WriteFixedString32(msg);
-            playerDriver.EndSend(writer);
+            _playerDriver.EndSend(writer);
         }
     }
 
@@ -481,22 +481,22 @@ public class SimpleRelayUtp : MonoBehaviour
     /// </summary>
     public void OnDisconnectPlayers()
     {
-        if (serverConnections.Length == 0)
+        if (_serverConnections.Length == 0)
         {
             Debug.LogError("No players connected to disconnect.");
             return;
         }
 
         // In this sample, we will simply disconnect all connected clients.
-        for (int i = 0; i < serverConnections.Length; i++)
+        for (int i = 0; i < _serverConnections.Length; i++)
         {
             // This sends a disconnect event to the destination client,
             // letting them know they are disconnected from the Host.
-            hostDriver.Disconnect(serverConnections[i]);
+            _hostDriver.Disconnect(_serverConnections[i]);
 
             // Here, we set the destination client's NetworkConnection to the default value.
             // It will be recognized in the Host's Update loop as a stale connection, and be removed.
-            serverConnections[i] = default(NetworkConnection);
+            _serverConnections[i] = default(NetworkConnection);
         }
     }
 
@@ -507,54 +507,54 @@ public class SimpleRelayUtp : MonoBehaviour
     {
         // This sends a disconnect event to the Host client,
         // letting them know they are disconnecting.
-        playerDriver.Disconnect(clientConnection);
+        _playerDriver.Disconnect(_clientConnection);
 
         // We remove the reference to the current connection by overriding it.
-        clientConnection = default(NetworkConnection);
+        _clientConnection = default(NetworkConnection);
     }
 
     void UpdateHost()
     {
         // Skip update logic if the Host is not yet bound.
-        if (!hostDriver.IsCreated || !hostDriver.Bound)
+        if (!_hostDriver.IsCreated || !_hostDriver.Bound)
         {
             return;
         }
 
         // This keeps the binding to the Relay server alive,
         // preventing it from timing out due to inactivity.
-        hostDriver.ScheduleUpdate().Complete();
+        _hostDriver.ScheduleUpdate().Complete();
 
         // Clean up stale connections.
-        for (int i = 0; i < serverConnections.Length; i++)
+        for (int i = 0; i < _serverConnections.Length; i++)
         {
-            if (!serverConnections[i].IsCreated)
+            if (!_serverConnections[i].IsCreated)
             {
                 Debug.Log("Stale connection removed");
-                serverConnections.RemoveAt(i);
+                _serverConnections.RemoveAt(i);
                 --i;
             }
         }
 
         // Accept incoming client connections.
         NetworkConnection incomingConnection;
-        while ((incomingConnection = hostDriver.Accept()) != default(NetworkConnection))
+        while ((incomingConnection = _hostDriver.Accept()) != default(NetworkConnection))
         {
             // Adds the requesting Player to the serverConnections list.
             // This also sends a Connect event back the requesting Player,
             // as a means of acknowledging acceptance.
             Debug.Log("Accepted an incoming connection.");
-            serverConnections.Add(incomingConnection);
+            _serverConnections.Add(incomingConnection);
         }
 
         // Process events from all connections.
-        for (int i = 0; i < serverConnections.Length; i++)
+        for (int i = 0; i < _serverConnections.Length; i++)
         {
-            Assert.IsTrue(serverConnections[i].IsCreated);
+            Assert.IsTrue(_serverConnections[i].IsCreated);
 
             // Resolve event queue.
             NetworkEvent.Type eventType;
-            while ((eventType = hostDriver.PopEventForConnection(serverConnections[i], out var stream)) != NetworkEvent.Type.Empty)
+            while ((eventType = _hostDriver.PopEventForConnection(_serverConnections[i], out var stream)) != NetworkEvent.Type.Empty)
             {
                 switch (eventType)
                 {
@@ -562,13 +562,13 @@ public class SimpleRelayUtp : MonoBehaviour
                     case NetworkEvent.Type.Data:
                         FixedString32Bytes msg = stream.ReadFixedString32();
                         Debug.Log($"Server received msg: {msg}");
-                        hostLatestMessageReceived = msg.ToString();
+                        _hostLatestMessageReceived = msg.ToString();
                         break;
 
                     // Handle Disconnect events.
                     case NetworkEvent.Type.Disconnect:
                         Debug.Log("Server received disconnect from client");
-                        serverConnections[i] = default(NetworkConnection);
+                        _serverConnections[i] = default(NetworkConnection);
                         break;
                 }
             }
@@ -578,18 +578,18 @@ public class SimpleRelayUtp : MonoBehaviour
     void UpdatePlayer()
     {
         // Skip update logic if the Player is not yet bound.
-        if (!playerDriver.IsCreated || !playerDriver.Bound)
+        if (!_playerDriver.IsCreated || !_playerDriver.Bound)
         {
             return;
         }
 
         // This keeps the binding to the Relay server alive,
         // preventing it from timing out due to inactivity.
-        playerDriver.ScheduleUpdate().Complete();
+        _playerDriver.ScheduleUpdate().Complete();
 
         // Resolve event queue.
         NetworkEvent.Type eventType;
-        while ((eventType = clientConnection.PopEvent(playerDriver, out var stream)) != NetworkEvent.Type.Empty)
+        while ((eventType = _clientConnection.PopEvent(_playerDriver, out var stream)) != NetworkEvent.Type.Empty)
         {
             switch (eventType)
             {
@@ -597,7 +597,7 @@ public class SimpleRelayUtp : MonoBehaviour
                 case NetworkEvent.Type.Data:
                     FixedString32Bytes msg = stream.ReadFixedString32();
                     Debug.Log($"Player received msg: {msg}");
-                    playerLatestMessageReceived = msg.ToString();
+                    _playerLatestMessageReceived = msg.ToString();
                     break;
 
                 // Handle Connect events.
@@ -608,7 +608,7 @@ public class SimpleRelayUtp : MonoBehaviour
                 // Handle Disconnect events.
                 case NetworkEvent.Type.Disconnect:
                     Debug.Log("Player got disconnected from the Host");
-                    clientConnection = default(NetworkConnection);
+                    _clientConnection = default(NetworkConnection);
                     break;
             }
         }

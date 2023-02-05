@@ -1,6 +1,6 @@
-//Attach this script to your GameObject. This GameObject doesn’t need to have a Collider component
+//Attach this script to your GameObject. This GameObject doesnï¿½t need to have a Collider component
 //Set the Layer Mask field in the Inspector to the layer you would like to see collisions in (set to Everything if you are unsure).
-//Create a second Gameobject for testing collisions. Make sure your GameObject has a Collider component (if it doesn’t, click on the Add Component button in the GameObject’s Inspector, and go to Physics>Box Collider).
+//Create a second Gameobject for testing collisions. Make sure your GameObject has a Collider component (if it doesnï¿½t, click on the Add Component button in the GameObjectï¿½s Inspector, and go to Physics>Box Collider).
 //Place it so it is overlapping your other GameObject.
 //Press Play to see the console output the name of your second GameObject
 
@@ -11,14 +11,14 @@ using TMPro;
 
 public class OverlapBox : MonoBehaviour
 {
-    public TMP_Text scoreText;
-    bool m_Started;
-    public LayerMask m_LayerMask;
+    public TMP_Text ScoreText;
+    bool _mStarted;
+    public LayerMask MLayerMask;
 
     void Start()
     {
         //Use this to ensure that the Gizmos are being drawn when in Play Mode.
-        m_Started = true;
+        _mStarted = true;
     }
 
     void FixedUpdate()
@@ -30,7 +30,7 @@ public class OverlapBox : MonoBehaviour
     {
         //Use the OverlapBox to detect if there are any other colliders within this box area.
         //Use the GameObject's centre, half the size (as a radius) and rotation. This creates an invisible box around your GameObject.
-        Collider[] hitColliders = Physics.OverlapBox(gameObject.transform.position, transform.localScale / 2, Quaternion.identity, m_LayerMask);
+        Collider[] hitColliders = Physics.OverlapBox(gameObject.transform.position, transform.localScale / 2, Quaternion.identity, MLayerMask);
         int i = 0;
         //Check when there is a new collider coming into contact with the box
         while (i < hitColliders.Length)
@@ -48,7 +48,7 @@ public class OverlapBox : MonoBehaviour
     {
         Gizmos.color = Color.red;
         //Check that it is being run in Play Mode, so it doesn't try to draw this in Editor mode
-        if (m_Started)
+        if (_mStarted)
             //Draw a cube where the OverlapBox is (positioned where your GameObject is as well as a size)
             Gizmos.DrawWireCube(transform.position, transform.localScale);
     }

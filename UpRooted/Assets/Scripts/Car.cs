@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Car : MonoBehaviour
 {
-    [SerializeField] ParticleSystem explosionParticles;
+    [SerializeField] ParticleSystem ExplosionParticles;
 
 
 
@@ -14,7 +14,7 @@ public class Car : MonoBehaviour
     {
         if (other.gameObject.GetComponent<PlantGrowth>())
         {
-            explosionParticles.Play();
+            ExplosionParticles.Play();
 
         }
     }

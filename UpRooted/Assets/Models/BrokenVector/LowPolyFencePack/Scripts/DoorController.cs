@@ -26,11 +26,11 @@ namespace BrokenVector.LowPolyFencePack
         public DoorState CurrentState {
             get
             {
-                return currentState;
+                return _currentState;
             }
             set
             {
-                currentState = value;
+                _currentState = value;
                 Animate();
             }
         }
@@ -47,39 +47,39 @@ namespace BrokenVector.LowPolyFencePack
         public float AnimationSpeed = 1;
 
         [SerializeField]
-        private AnimationClip openAnimation;
+        private AnimationClip OpenAnimation;
         [SerializeField]
-        private AnimationClip closeAnimation;
+        private AnimationClip CloseAnimation;
 
-        private Animation animator;
-        private DoorState currentState;
+        private Animation _animator;
+        private DoorState _currentState;
 
         void Awake()
         {
-            animator = GetComponent<Animation>();
-            if (animator == null)
+            _animator = GetComponent<Animation>();
+            if (_animator == null)
             {
                 Debug.LogError("Every DoorController needs an Animator.");
                 return;
             }
             
             // animator settings
-            animator.playAutomatically = false;
+            _animator.playAutomatically = false;
 
             // prepare animation clips
-            openAnimation.legacy = true;
-            closeAnimation.legacy = true;
-            animator.AddClip(openAnimation, DoorState.Open.ToString());
-            animator.AddClip(closeAnimation, DoorState.Closed.ToString());
+            OpenAnimation.legacy = true;
+            CloseAnimation.legacy = true;
+            _animator.AddClip(OpenAnimation, DoorState.Open.ToString());
+            _animator.AddClip(CloseAnimation, DoorState.Closed.ToString());
         }
 
         void Start()
         {            
             // a little hack, to set the initial state
-            currentState = InitialState;
+            _currentState = InitialState;
             var clip = GetCurrentAnimation();
-            animator[clip].speed = 9999;
-            animator.Play(clip);
+            _animator[clip].speed = 9999;
+            _animator.Play(clip);
         }
 
         /// <summary>
@@ -118,8 +118,8 @@ namespace BrokenVector.LowPolyFencePack
         private void Animate()
         {
             var clip = GetCurrentAnimation();
-            animator[clip].speed = AnimationSpeed;
-            animator.Play(clip);
+            _animator[clip].speed = AnimationSpeed;
+            _animator.Play(clip);
         }
 
         private string GetCurrentAnimation()

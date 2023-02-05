@@ -5,33 +5,33 @@ using UnityEngine;
 
 public class PlantGrowth : MonoBehaviour
 {
-    public bool isBad;
-    public MeshRenderer meshRenderer;
-    public Material goodMaterial;
-    public Material badMaterial;
+    public bool IsBad;
+    public MeshRenderer MeshRenderer;
+    public Material GoodMaterial;
+    public Material BadMaterial;
 
 
 
-    public Vector3 currentScale;
-    private Vector3 startingScale;
+    public Vector3 CurrentScale;
+    private Vector3 _startingScale;
 
-    public Vector3 maxScale;
+    public Vector3 MaxScale;
 
-    public Vector3 growthSpeed;
+    public Vector3 GrowthSpeed;
 
     //[SerializeField] float growthSpeed = 5f;
     //[SerializeField] int finalGrowthStage = 100;
     //[SerializeField] int currentGrowthStage = 0;
 
-    [SerializeField] ParticleSystem readyParticles;
+    [SerializeField] ParticleSystem ReadyParticles;
 
-    public bool fullyGrown;
+    public bool FullyGrown;
     //[SerializeField] AudioSource audioSource;
     //[SerializeField] AudioClip audioClip;
 
     void Awake()
     {
-        startingScale = transform.localScale; // Store the starting scale
+        _startingScale = transform.localScale; // Store the starting scale
         transform.localScale = Vector3.zero;
     }
 
@@ -42,27 +42,27 @@ public class PlantGrowth : MonoBehaviour
 
     private void Update()
     {
-        currentScale = transform.localScale;
+        CurrentScale = transform.localScale;
 
-        if(!fullyGrown && currentScale.magnitude <= maxScale.magnitude)
+        if(!FullyGrown && CurrentScale.magnitude <= MaxScale.magnitude)
         {
             UpdateGrowth();
         }
-        else if(!fullyGrown)
+        else if(!FullyGrown)
         {
-            FullyGrown();
+            OnFullyGrown();
         }
     }
 
     protected virtual void UpdateGrowth()
     {
-        transform.localScale = transform.localScale + growthSpeed * Time.deltaTime;
+        transform.localScale = transform.localScale + GrowthSpeed * Time.deltaTime;
     }
 
-    protected virtual void FullyGrown()
+    protected virtual void OnFullyGrown()
     {
-        readyParticles.Play();
-        fullyGrown = true;
+        ReadyParticles.Play();
+        FullyGrown = true;
     }
 
 
@@ -80,10 +80,10 @@ public class PlantGrowth : MonoBehaviour
     {
         if (other.TryGetComponent<PlantGrowth>(out PlantGrowth plantGrowth))
         {
-            if (plantGrowth.isBad)//if other plant is bad, make this plant bad
+            if (plantGrowth.IsBad)//if other plant is bad, make this plant bad
             {
-                this.isBad = true;
-                meshRenderer.material = badMaterial;
+                this.IsBad = true;
+                MeshRenderer.material = BadMaterial;
             }
         }
     }
@@ -99,7 +99,7 @@ public class PlantGrowth : MonoBehaviour
 
     public void Harvest()
     {
-        if (fullyGrown)
+        if (FullyGrown)
         {
             print("Harvest");
         }
