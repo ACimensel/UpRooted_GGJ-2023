@@ -4,7 +4,7 @@ using UnityEngine;
 public class NetcodePlayer : NetworkBehaviour
 {
     [SerializeField] private float XBounds = 30;
-    [SerializeField] private float YSpawnHeight = .5f;
+    [SerializeField] private float YSpawnHeight;
     
     public int Speed = 10;
 
