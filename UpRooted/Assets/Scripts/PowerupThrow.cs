@@ -27,14 +27,13 @@ public class PowerupThrow : MonoBehaviour
 
     void Update()
     {
-        SetTargetPos();
         HandleMouseButton();
     }
 
     void SetTargetPos()
     {
         Vector3 v = transform.position + transform.forward * _distToThrow;
-        TargetPos = new Vector3(v.x, Projectile.localScale.y / 2, v.z);
+        TargetPos = new Vector3(Mathf.Clamp(v.x, -14.9f, 14.9f), Projectile.localScale.y / 2, Mathf.Clamp(v.z, -4.95f, 4.95f));
     }
 
     void HandleMouseButton()
@@ -52,6 +51,7 @@ public class PowerupThrow : MonoBehaviour
                 Debug.Log("Holding primary button.");
                 TargetRend.enabled = true;
                 _distToThrow += Time.deltaTime * ThrowIncreaseSpeed;
+                SetTargetPos();
             }
             //Throw On Left Mouse Release
             else if (Input.GetMouseButtonUp(0))

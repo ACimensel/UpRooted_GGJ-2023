@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class FollowPlayerTarget : MonoBehaviour
 {
+    public float y_offset = 0.3f;
+
     private PowerupThrow _pl;
 
     void Start()
@@ -13,6 +15,6 @@ public class FollowPlayerTarget : MonoBehaviour
 
     void Update()
     {
-        transform.position = new Vector3(_pl.TargetPos.x, 0, _pl.TargetPos.z);
+        transform.position = new Vector3(_pl.TargetPos.x, y_offset, _pl.TargetPos.z);
     }
 }
