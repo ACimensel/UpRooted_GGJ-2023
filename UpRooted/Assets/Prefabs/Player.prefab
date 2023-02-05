@@ -67,7 +67,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: d5b3e28f769533c46b1a3beee22dea86, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -160,6 +160,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5080c0312b85d8e44bad59ddf99016a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 415802049150937916}
   projectile: {fileID: 1454533747576084397, guid: 7d0053247e3a848a193e17a82d99bc08, type: 3}
   targetRend: {fileID: 3353589541931460119}
   firingAngle: 45
@@ -167,6 +168,8 @@ MonoBehaviour:
   minDist: 1
   targetPos: {x: 0, y: 0, z: 0}
   throwIncreaseSpeed: 12
+  heldItem: {fileID: 0}
+  touchingObject: {fileID: 0}
 --- !u!1 &7846464923258483232
 GameObject:
   m_ObjectHideFlags: 0

@@ -53,6 +53,10 @@ public class NetcodePickupSpawner : NetworkBehaviour
         
         NetworkObject plusNetworkObject = NetcodeObjectPool.Singleton.GetNetworkObject(prefabToSpawn, spawnPlusPos, Quaternion.identity);
         NetworkObject negNetworkObject = NetcodeObjectPool.Singleton.GetNetworkObject(prefabToSpawn, spawnNegPos, Quaternion.identity);
+
+        plusNetworkObject.Spawn();
+        negNetworkObject.Spawn();
+        
         if (startsGrown)
         {
             //plusNetworkObject.isPickable;
