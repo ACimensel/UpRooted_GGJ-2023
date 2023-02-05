@@ -16,6 +16,10 @@ public class PowerupThrow : MonoBehaviour
     public int throwIncreaseSpeed = 12;
     private Coroutine coroutine;
 
+    public GameObject heldItem;
+    public GameObject touchingObject;
+
+
     void Start()
     {
         distToThrow = minDist;
@@ -37,26 +41,69 @@ public class PowerupThrow : MonoBehaviour
     {
         if (coroutine == null)
         {
+            //Charge throw On Left Mouse Down
             if (Input.GetMouseButton(0))
             {
                 Debug.Log("Holding primary button.");
                 targetRend.enabled = true;
                 distToThrow += Time.deltaTime * throwIncreaseSpeed;
             }
+            //Throw On Left Mouse Release
             else if (Input.GetMouseButtonUp(0))
             {
-                NetworkObject networkObject = NetcodeObjectPool.Singleton.GetNetworkObject(projectile.gameObject, transform.position, Quaternion.identity);
 
-                networkObject.gameObject.SendMessage("SetTargetPos", targetPos);
 
                 Debug.Log("Primary button UP.");
                 targetRend.enabled = false;
 
-                //projectile.position = transform.position;
-                //projectile.gameObject.SendMessage("SetTargetPos", targetPos);
-
                 distToThrow = minDist;
+
+                if (heldItem != null) 
+                {
+                    heldItem.SendMessage("SetTargetPos", targetPos);
+
+                    //NetworkObject networkObject = NetcodeObjectPool.Singleton.GetNetworkObject(projectile.gameObject, transform.position, Quaternion.identity);
+                    //networkObject.gameObject.SendMessage("SetTargetPos", targetPos);
+
+                    DropItem();
+                }
             }
         }
+        if (Input.GetMouseButtonDown(1) && heldItem != null) 
+        {
+            DropItem();
+        }
+        else if (Input.GetMouseButtonDown(1) && heldItem == null && touchingObject != null)
+        {
+            PickUpItem();
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.GetComponent<ProjectileMotion>())
+        {
+            touchingObject = other.gameObject;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        touchingObject = null;
+    }
+
+    private void PickUpItem()
+    {
+        //ObjectIwantToPickUp.GetComponent<Rigidbody>().isKinematic = true;
+        heldItem = touchingObject;
+        heldItem.transform.position = transform.position;
+        heldItem.transform.parent = transform;
+    }
+
+    private void DropItem()
+    {
+        heldItem.transform.parent = null;
+        heldItem = null;
+        touchingObject = null;//???
     }
 }
