@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Potato : Item
+public class Potato : PlantGrowth
 {
     protected override void Initialize()
     {

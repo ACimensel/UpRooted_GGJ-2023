@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ItemColor : Item
+public class ItemColor : PlantGrowth
 {
     [SerializeField] private Color color;
     [SerializeField] MeshRenderer meshRenderer;
