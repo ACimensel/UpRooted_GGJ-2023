@@ -59,8 +59,10 @@ public class NetcodePickupSpawner : NetworkBehaviour
         
         if (startsGrown)
         {
-            //plusNetworkObject.isPickable;
-            //plusNetworkObject.isPickable
+            plusNetworkObject.gameObject.SetActive(true);
+            negNetworkObject.gameObject.SetActive(true);
+            plusNetworkObject.GetComponent<PlantGrowth>().OnFullyGrown();
+            negNetworkObject.GetComponent<PlantGrowth>().OnFullyGrown();
         }
     }
     

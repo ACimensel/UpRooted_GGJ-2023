@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-public class PowerupThrow : MonoBehaviour
+public class PowerupThrow : NetworkBehaviour
 {
-    public Transform Projectile; // TODO instantiate
+    public Transform Projectile;
     public Renderer TargetRend;
     public float FiringAngle = 45.0f;
     public float Gravity = 9.8f;
@@ -42,7 +42,7 @@ public class PowerupThrow : MonoBehaviour
         {
             if(HeldItem == null)
             {
-
+                
 
             }
             //Charge throw On Left Mouse Down
@@ -109,7 +109,6 @@ public class PowerupThrow : MonoBehaviour
         }
 
         //ObjectIwantToPickUp.GetComponent<Rigidbody>().isKinematic = true;
-
     }
 
     private void DropItem()
