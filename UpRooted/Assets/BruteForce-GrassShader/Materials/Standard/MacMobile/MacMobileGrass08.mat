@@ -124,7 +124,7 @@ Material:
     - _WorldScale: 10
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.7085855, g: 0.78855807, b: 0.8018868, a: 1}
+    - _Color: {r: 0.6752403, g: 0.75255394, b: 0.764151, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GroundColor: {r: 0.90800005, g: 0.90800005, b: 0.90800005, a: 1}
     - _ProjectedShadowColor: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
