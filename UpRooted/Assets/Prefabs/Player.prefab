@@ -149,15 +149,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5080c0312b85d8e44bad59ddf99016a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectile: {fileID: 1454533747576084397, guid: 7d0053247e3a848a193e17a82d99bc08, type: 3}
-  targetRend: {fileID: 3353589541931460119}
-  firingAngle: 45
-  gravity: 9.8
-  minDist: 1
-  targetPos: {x: 0, y: 0, z: 0}
-  throwIncreaseSpeed: 12
-  heldItem: {fileID: 0}
-  touchingObject: {fileID: 0}
+  Projectile: {fileID: 0}
+  TargetRend: {fileID: 3353589541931460119}
+  FiringAngle: 45
+  Gravity: 9.8
+  MinDist: 5
+  TargetPos: {x: 0, y: 0, z: 0}
+  ThrowIncreaseSpeed: 12
+  HeldItem: {fileID: 0}
+  TouchingObject: {fileID: 0}
 --- !u!114 &4250541410983891021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -172,6 +172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   XBounds: 30
   YSpawnHeight: 0.5
+  Speed: 10
 --- !u!114 &2900239713606949997
 MonoBehaviour:
   m_ObjectHideFlags: 0

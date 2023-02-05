@@ -41,6 +41,8 @@ public class OverlapBox : MonoBehaviour
             //Increase the number of Colliders in the array
             i++;
         }
+
+
     }
 
     //Draw the Box Overlap as a gizmo to show where it currently is testing. Click the Gizmos button to see this
