@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -54,6 +55,8 @@ public class NetMenuManager : MonoBehaviour
     /// The input field for the Join Code that the Player inputs to join the Host's Relay server.
     /// </summary>
     [SerializeField] private InputField JoinCodeInput;
+
+    [SerializeField] private TMP_Text JoinCodeOutput;
 
     private bool _interactable = true;
     
@@ -195,7 +198,7 @@ public class NetMenuManager : MonoBehaviour
         Debug.Log($"The chosen region is: {region ?? _autoSelectRegionName}");
 
         // Set max connections. Can be up to 100, but note the more players connected, the higher the bandwidth/latency impact.
-        int maxConnections = 1;
+        int maxConnections = 2;
 
         await AllocateRelayServerAndGetJoinCode(maxConnections, region);
 
@@ -248,6 +251,7 @@ public class NetMenuManager : MonoBehaviour
 
         // TODO Display the joinCode to the user.
         Debug.Log("***** " + _joinCode + " *****");
+        JoinCodeOutput.text = _joinCode;
 
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
         NetworkManager.Singleton.StartHost();

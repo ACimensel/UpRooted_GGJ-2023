@@ -5,15 +5,15 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public Camera playerCamera;
+    public Camera PlayerCamera;
 
-    private int speed = 10;
-    private Rigidbody rb;
+    private readonly int _speed = 10;
+    private Rigidbody _rb;
 
     private void Awake()
     {
-        playerCamera = Camera.main;
-        rb = GetComponent<Rigidbody>();
+        PlayerCamera = Camera.main;
+        _rb = GetComponent<Rigidbody>();
     }
 
     void Update()
@@ -25,14 +25,14 @@ public class PlayerController : MonoBehaviour
     void Move()
     {
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
-        transform.position += movement * speed * Time.deltaTime;
+        transform.position += movement * _speed * Time.deltaTime;
         
         // rb.velocity = movement * speed * Time.deltaTime;
     }
 
     void RotatePlayer()
     {
-        Ray mouseRay = playerCamera.ScreenPointToRay(Input.mousePosition);
+        Ray mouseRay = PlayerCamera.ScreenPointToRay(Input.mousePosition);
         Plane p = new Plane(Vector3.up, transform.position);
         if (p.Raycast(mouseRay, out float hitDist))
         {
