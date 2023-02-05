@@ -49,12 +49,12 @@ public class NetMenuManager : MonoBehaviour
     /// <summary>
     /// The dropdown displaying the region.
     /// </summary>
-    [SerializeField] private Dropdown RegionsDropdown;
+    [SerializeField] private TMP_Dropdown RegionsDropdown;
     
     /// <summary>
     /// The input field for the Join Code that the Player inputs to join the Host's Relay server.
     /// </summary>
-    [SerializeField] private InputField JoinCodeInput;
+    [SerializeField] private TMP_InputField JoinCodeInput;
 
     [SerializeField] private TMP_Text JoinCodeOutput;
 
@@ -348,6 +348,14 @@ public class NetMenuManager : MonoBehaviour
 
     public void ButtonHost()
     {
+        HostLocal();
+    }
+
+    private async void HostLocal()
+    {
+        Task<RelayServerData> serverRelayUtilityTask = AllocateRelayServerAndGetJoinCode(2);
+        RelayServerData relayServerData = serverRelayUtilityTask.Result;
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
         NetworkManager.Singleton.StartHost();
         HideAll();
     }

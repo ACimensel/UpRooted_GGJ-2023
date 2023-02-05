@@ -1,0 +1,5 @@
+{
+    "folderName": "RateGame",
+    "longVersion": "1.3.6",
+    "shortVersion": 5
+}
