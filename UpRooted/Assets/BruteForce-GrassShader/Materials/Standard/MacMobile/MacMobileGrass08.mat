@@ -2,14 +2,18 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MacMobileGrass08
   m_Shader: {fileID: 4800000, guid: 633f3942dd21bc74e8ced79f61bff941, type: 3}
-  m_ShaderKeywords: USE_RT USE_S _RTEFFECT_ON
+  m_ValidKeywords:
+  - USE_RT
+  - USE_S
+  m_InvalidKeywords:
+  - _RTEFFECT_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -75,6 +79,7 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
@@ -85,8 +90,9 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _GrassSaturation: 2.65
-    - _GrassShading: 0.127
+    - _GrassCut: 0
+    - _GrassSaturation: 1.2
+    - _GrassShading: 0.1
     - _GrassThinness: 0.45
     - _GrassThinnessIntersection: 1.24
     - _Metallic: 0
@@ -103,16 +109,24 @@ Material:
     - _TilingN2: 0.05
     - _TilingN3: 1.25
     - _UVSec: 0
+    - _UseAmbientLight: 0
     - _UsePR: 0
     - _UseRT: 1
     - _UseShadow: 1
     - _UseShadowCast: 0
+    - _UseTP: 0
+    - _UseVP: 0
+    - _UseVR: 0
+    - _UseWC: 0
     - _WindForce: 0.22
     - _WindMovement: 0.2
+    - _WorldRotation: 0
+    - _WorldScale: 10
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.553, g: 0.553, b: 0.553, a: 1}
+    - _Color: {r: 0.7085855, g: 0.78855807, b: 0.8018868, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GroundColor: {r: 0.90800005, g: 0.90800005, b: 0.90800005, a: 1}
-    - _ProjectedShadowColor: {r: 0.13443395, g: 0.5, b: 0.3870955, a: 1}
-    - _SelfShadowColor: {r: 0.18803798, g: 0.29799998, b: 0.25258088, a: 1}
+    - _ProjectedShadowColor: {r: 0.509434, g: 0.509434, b: 0.509434, a: 1}
+    - _SelfShadowColor: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 1}
+  m_BuildTextureStacks: []
