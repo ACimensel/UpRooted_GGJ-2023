@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 6058095043476229325}
   - component: {fileID: 1663110926061631119}
   - component: {fileID: -2047434933654993952}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Throwable (Bad)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,6 +180,10 @@ PrefabInstance:
     - target: {fileID: 5950617119014471752, guid: 05c15bdd2460b7548807c1b590bf05b3, type: 3}
       propertyPath: m_Name
       value: EvilPlant Grown Particles
+      objectReference: {fileID: 0}
+    - target: {fileID: 5950617119014471752, guid: 05c15bdd2460b7548807c1b590bf05b3, type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9085608413379873230, guid: 05c15bdd2460b7548807c1b590bf05b3, type: 3}
       propertyPath: m_RootOrder
