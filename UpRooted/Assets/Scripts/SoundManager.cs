@@ -39,6 +39,7 @@ public class SoundManager : MonoBehaviour
 	public void PlayMusic(AudioClip clip)
 	{
 		MusicSource.clip = clip;
+		MusicSource.loop = true;
 		MusicSource.Play();
 	}
 	// Play a random clip from an array, and randomize the pitch slightly.
