@@ -5,7 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/CleanScene.unity
     guid: 7ec504f143f7e4904aa111ffb867721d
+  - enabled: 1
+    path: Assets/Scenes/WeatherTest.unity
+    guid: 0cddb39390d8d423fa7d2984a9ed9f91
   m_configObjects: {}
