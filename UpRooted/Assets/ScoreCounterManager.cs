@@ -28,4 +28,5 @@ public class ScoreCounterManager : MonoBehaviour
         LeftOverlapBox.MyCollisions();
         RightOverlapBox.MyCollisions();
     }
+
 }

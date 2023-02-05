@@ -12,7 +12,9 @@ using TMPro;
 public class OverlapBox : MonoBehaviour
 {
     public TMP_Text ScoreText;
+    [SerializeField] GameObject menu;
 
+    [SerializeField] int PlayerScore;
 
 
 
@@ -33,19 +35,21 @@ public class OverlapBox : MonoBehaviour
         int i = 0;
         //Check when there is a new collider coming into contact with the box
 
+        PlayerScore = hitColliders.Length;
 
-        ScoreText.SetText(hitColliders.Length.ToString());
-
-        //while (i < hitColliders.Length)
-        //{
-        //    //scoreText = hitColliders.Length;
-        //    //Output all of the collider names
-        //    Debug.Log("Hit : " + hitColliders[i].name + i);
-        //    //Increase the number of Colliders in the array
-        //    i++;
-        //}
+        ScoreText.SetText(PlayerScore.ToString());
 
 
+
+        if(PlayerScore >= 10)
+        {
+            Lose();
+        }
+    }
+
+    public void Lose()
+    {
+        menu.SetActive(true);
     }
 
     //Draw the Box Overlap as a gizmo to show where it currently is testing. Click the Gizmos button to see this
