@@ -152,6 +152,9 @@ MonoBehaviour:
   MeshRenderer: {fileID: 1454533747576084395}
   GoodMaterial: {fileID: 2100000, guid: 0b0961e423800e146b5c77119a0e6a05, type: 2}
   BadMaterial: {fileID: 2100000, guid: f4c6dd298df1e534baf84e7503434c6d, type: 2}
+  CorruptionLayerMask:
+    serializedVersion: 2
+    m_Bits: 64
   CurrentScale: {x: 0, y: 0, z: 0}
   MaxScale: {x: 0.3, y: 0.3, z: 0.3}
   GrowthSpeed: {x: 0.1, y: 0.1, z: 0.1}

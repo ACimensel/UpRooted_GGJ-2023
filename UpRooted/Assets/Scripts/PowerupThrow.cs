@@ -102,7 +102,7 @@ public class PowerupThrow : NetworkBehaviour
             if (plantGrowth.FullyGrown == false)
                 return;
       
-            plantGrowth.Harvest();
+            //plantGrowth.Harvest();
             HeldItem = TouchingObject;
             HeldItem.transform.position = transform.position;
             HeldItem.transform.parent = transform;

@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fcaa1ab3b227fe459c13a190f40aa81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_LayerMask:
+  ScoreText: {fileID: 0}
+  MLayerMask:
     serializedVersion: 2
     m_Bits: 64

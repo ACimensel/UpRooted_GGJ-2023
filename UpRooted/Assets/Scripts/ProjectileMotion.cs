@@ -44,5 +44,6 @@ public class ProjectileMotion : MonoBehaviour
 
             yield return null;
         }
+        ScoreCounterManager.Singleton.Count();
     }
 }
