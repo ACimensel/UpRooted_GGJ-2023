@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public Camera playerCamera;
-
+    private Camera playerCamera;
     private int speed = 10;
     private Rigidbody rb;
 
@@ -26,8 +25,6 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 movement = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
         transform.position += movement * speed * Time.deltaTime;
-        
-        // rb.velocity = movement * speed * Time.deltaTime;
     }
 
     void RotatePlayer()
