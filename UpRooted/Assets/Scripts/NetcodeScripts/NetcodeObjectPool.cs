@@ -116,7 +116,7 @@ public class NetcodeObjectPool : NetworkBehaviour
         _prefabs.Add(prefab);
         var prefabQueue = new Queue<NetworkObject>();
         _pooledObjects[prefab] = prefabQueue;
-        for (int i = 0; i < prewarmCount; i++)
+        for (int i = 0; i < prewarmCount; ++i)
         {
             var newInstance = CreateInstance(prefab);
             ReturnNetworkObject(newInstance.GetComponent<NetworkObject>(), prefab);

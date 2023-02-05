@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Garlic : Item
+public class Garlic : PlantGrowth
 {
     protected override void Initialize()
     {

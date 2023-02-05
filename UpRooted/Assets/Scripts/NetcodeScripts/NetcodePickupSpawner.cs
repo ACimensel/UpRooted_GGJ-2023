@@ -49,7 +49,7 @@ public class NetcodePickupSpawner : NetworkBehaviour
         var spawnPlusPos = RandomPointInsideRect(1);
         var spawnNegPos = RandomPointInsideRect(-1);
 
-        GameObject prefabToSpawn = PickupPrefabs[Random.Range(0, PickupPrefabs.Length - 1)];
+        GameObject prefabToSpawn = PickupPrefabs[Random.Range(0, PickupPrefabs.Length)];
         
         NetworkObject plusNetworkObject = NetcodeObjectPool.Singleton.GetNetworkObject(prefabToSpawn, spawnPlusPos, Quaternion.identity);
         NetworkObject negNetworkObject = NetcodeObjectPool.Singleton.GetNetworkObject(prefabToSpawn, spawnNegPos, Quaternion.identity);
