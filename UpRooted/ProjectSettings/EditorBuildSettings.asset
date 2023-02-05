@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TEST.unity
     guid: 2dc69c70ee46628488fba9daa9072fc0
+  - enabled: 1
+    path: Assets/Scenes/BackwardArena.unity
+    guid: 1618daedd656f584bb9a447f1e6d4a80
   m_configObjects: {}
