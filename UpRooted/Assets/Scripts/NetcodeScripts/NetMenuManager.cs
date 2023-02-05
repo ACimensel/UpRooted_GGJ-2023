@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using Unity.Networking.Transport;
 using Unity.Networking.Transport.Relay;
 using Unity.Services.Authentication;
@@ -121,13 +123,7 @@ public class NetMenuManager : MonoBehaviour
                 OnRegion(); // async, then to region menu
                 break;
             case ConnectionState.Allocate:
-                OnAllocate();
-                break;
-            case ConnectionState.BindAsHost:
-                OnBindHost();
-                break;
-            case ConnectionState.GetJoinCode:
-                OnJoinCode();
+                OnAllocate(); // then into game
                 break;
 
             case ConnectionState.JoinSignin:
@@ -137,14 +133,9 @@ public class NetMenuManager : MonoBehaviour
                 UpdateActiveMenu(newState); // to JoinCodeEntry
                 break;
             case ConnectionState.JoinWithCode:
-                OnJoin();
+                OnJoin(); // then into game
                 break;
-            case ConnectionState.BindToHost:
-                OnBindPlayer();
-                break;
-            case ConnectionState.ConnectToHost:
-                OnConnectPlayer();
-                break;
+            
             case ConnectionState.InGame:
                 HideAll();
                 break;
@@ -204,17 +195,64 @@ public class NetMenuManager : MonoBehaviour
         Debug.Log($"The chosen region is: {region ?? _autoSelectRegionName}");
 
         // Set max connections. Can be up to 100, but note the more players connected, the higher the bandwidth/latency impact.
-        int maxConnections = 4;
+        int maxConnections = 1;
 
-        // Important: Once the allocation is created, you have ten seconds to BIND, else the allocation times out.
-        _hostAllocation = await RelayService.Instance.CreateAllocationAsync(maxConnections, region);
-        Debug.Log($"Host Allocation ID: {_hostAllocation.AllocationId}, region: {_hostAllocation.Region}");
+        await AllocateRelayServerAndGetJoinCode(maxConnections, region);
 
-        // Initialize NetworkConnection list for the server (Host).
-        // This list object manages the NetworkConnections which represent connected players.
-        _serverConnections = new NativeList<NetworkConnection>(maxConnections, Allocator.Persistent);
-        
-        HandleMenuState(ConnectionState.BindAsHost);
+        StartCoroutine(ConfigureTransportAndStartNgoAsHost(maxConnections));
+    }
+    
+    private async Task<RelayServerData> AllocateRelayServerAndGetJoinCode(int maxConnections, string region = null)
+    {
+        Allocation allocation;
+        try
+        {
+            allocation = await RelayService.Instance.CreateAllocationAsync(maxConnections, region);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Relay create allocation request failed {e.Message}");
+            throw;
+        }
+
+        Debug.Log($"server: {allocation.ConnectionData[0]} {allocation.ConnectionData[1]}");
+        Debug.Log($"server: {allocation.AllocationId}");
+
+        try
+        {
+            _joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
+        }
+        catch
+        {
+            Debug.LogError("Relay create join code request failed");
+            throw;
+        }
+
+        return new RelayServerData(allocation, "dtls");
+    }
+    
+    IEnumerator ConfigureTransportAndStartNgoAsHost(int maxConnections)
+    {
+        Task<RelayServerData> serverRelayUtilityTask = AllocateRelayServerAndGetJoinCode(maxConnections);
+        while (!serverRelayUtilityTask.IsCompleted)
+        {
+            yield return null;
+        }
+        if (serverRelayUtilityTask.IsFaulted)
+        {
+            Debug.LogError("Exception thrown when attempting to start Relay Server. Server not started. Exception: " + serverRelayUtilityTask.Exception.Message);
+            yield break;
+        }
+
+        RelayServerData relayServerData = serverRelayUtilityTask.Result;
+
+        // TODO Display the joinCode to the user.
+        Debug.Log("***** " + _joinCode + " *****");
+
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+        NetworkManager.Singleton.StartHost();
+        HandleMenuState(ConnectionState.InGame);
+        yield return null;
     }
     
     private string GetRegionOrQosDefault()
@@ -228,85 +266,6 @@ public class NetMenuManager : MonoBehaviour
         return _regions[RegionsDropdown.value - 1].Id;
     }
     
-    /// <summary>
-    /// Event handler for when the Bind Host to Relay (UTP) button is clicked.
-    /// </summary>
-    private void OnBindHost()
-    {
-        Debug.Log("Host - Binding to the Relay server using UTP.");
-
-        // Extract the Relay server data from the Allocation response.
-        var relayServerData = new RelayServerData(_hostAllocation, "udp");
-
-        // Create NetworkSettings using the Relay server data.
-        var settings = new NetworkSettings();
-        settings.WithRelayParameters(ref relayServerData);
-
-        // Create the Host's NetworkDriver from the NetworkSettings.
-        _hostDriver = NetworkDriver.Create(settings);
-
-        // Bind to the Relay server.
-        if (_hostDriver.Bind(NetworkEndPoint.AnyIpv4) != 0)
-        {
-            Debug.LogError("Host client failed to bind");
-            return;
-        }
-
-        if (_hostDriver.Listen() != 0)
-        {
-            Debug.LogError("Host client failed to listen");
-            return;
-        }
-
-        Debug.Log("Host client bound to Relay server");
-
-        HandleMenuState(ConnectionState.GetJoinCode);
-    }
-    
-    /// <summary>
-    /// Event handler for when the Get Join Code button is clicked.
-    /// </summary>
-    private async void OnJoinCode()
-    {
-        Debug.Log("Host - Getting a join code for my allocation. I would share that join code with the other players so they can join my session.");
-
-        try
-        {
-            _joinCode = await RelayService.Instance.GetJoinCodeAsync(_hostAllocation.AllocationId);
-            Debug.Log("Host - Got join code: " + _joinCode);
-        }
-        catch (RelayServiceException ex)
-        {
-            Debug.LogError(ex.Message + "\n" + ex.StackTrace);
-            return;
-        }
-        
-        HandleMenuState(ConnectionState.InGame);
-    }
-    
-    /// <summary>
-    /// Event handler for when the DisconnectPlayers (UTP) button is clicked.
-    /// </summary>
-    public void OnDisconnectPlayers()
-    {
-        if (_serverConnections.Length == 0)
-        {
-            Debug.LogError("No players connected to disconnect.");
-            return;
-        }
-
-        // In this sample, we will simply disconnect all connected clients.
-        for (int i = 0; i < _serverConnections.Length; i++)
-        {
-            // This sends a disconnect event to the destination client,
-            // letting them know they are disconnected from the Host.
-            _hostDriver.Disconnect(_serverConnections[i]);
-
-            // Here, we set the destination client's NetworkConnection to the default value.
-            // It will be recognized in the Host's Update loop as a stale connection, and be removed.
-            _serverConnections[i] = default;
-        }
-    }
     #endregion
     
 #region Client_UTP
@@ -323,78 +282,55 @@ public class NetMenuManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("Player - Joining host allocation using join code. Upon success, I have 10 seconds to BIND to the Relay server that I've allocated.");
-
+        await JoinRelayServerFromJoinCode(JoinCodeInput.text);
+        StartCoroutine(ConfigureTransportAndStartNgoAsConnectingPlayer(JoinCodeInput.text));
+    }
+    
+    private static async Task<RelayServerData> JoinRelayServerFromJoinCode(string joinCode)
+    {
+        JoinAllocation allocation;
         try
         {
-            _playerAllocation = await RelayService.Instance.JoinAllocationAsync(JoinCodeInput.text);
-            Debug.Log("Player Allocation ID: " + _playerAllocation.AllocationId);
+            allocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
         }
-        catch (RelayServiceException ex)
+        catch
         {
-            Debug.LogError(ex.Message + "\n" + ex.StackTrace);
-            return;
+            Debug.LogError("Relay create join code request failed");
+            throw;
         }
-        
-        HandleMenuState(ConnectionState.BindToHost);
+
+        Debug.Log($"client: {allocation.ConnectionData[0]} {allocation.ConnectionData[1]}");
+        Debug.Log($"host: {allocation.HostConnectionData[0]} {allocation.HostConnectionData[1]}");
+        Debug.Log($"client: {allocation.AllocationId}");
+
+        return new RelayServerData(allocation, "dtls");
     }
     
-    
-    /// <summary>
-    /// Event handler for when the Bind Player to Relay (UTP) button is clicked.
-    /// </summary>
-    private void OnBindPlayer()
+    IEnumerator ConfigureTransportAndStartNgoAsConnectingPlayer(string userEnteredJoinCode)
     {
-        Debug.Log("Player - Binding to the Relay server using UTP.");
+        // Populate RelayJoinCode beforehand through the UI
+        var clientRelayUtilityTask = JoinRelayServerFromJoinCode(userEnteredJoinCode);
 
-        // Extract the Relay server data from the Join Allocation response.
-        var relayServerData = new RelayServerData(_playerAllocation, "udp");
-
-        // Create NetworkSettings using the Relay server data.
-        var settings = new NetworkSettings();
-        settings.WithRelayParameters(ref relayServerData);
-
-        // Create the Player's NetworkDriver from the NetworkSettings object.
-        _playerDriver = NetworkDriver.Create(settings);
-
-        // Bind to the Relay server.
-        if (_playerDriver.Bind(NetworkEndPoint.AnyIpv4) != 0)
+        while (!clientRelayUtilityTask.IsCompleted)
         {
-            Debug.LogError("Player client failed to bind");
-            return;
+            yield return null;
         }
 
-        Debug.Log("Player client bound to Relay server");
+        if (clientRelayUtilityTask.IsFaulted)
+        {
+            Debug.LogError("Exception thrown when attempting to connect to Relay Server. Exception: " + clientRelayUtilityTask.Exception.Message);
+            yield break;
+        }
 
-        HandleMenuState(ConnectionState.ConnectToHost);
-    }
-    
-    /// <summary>
-    /// Event handler for when the Connect Player to Relay (UTP) button is clicked.
-    /// </summary>
-    private void OnConnectPlayer()
-    {
-        Debug.Log("Player - Connecting to Host's client.");
+        var relayServerData = clientRelayUtilityTask.Result;
 
-        // Sends a connection request to the Host Player.
-        _clientConnection = _playerDriver.Connect();
-        
+        NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(relayServerData);
+
+        NetworkManager.Singleton.StartClient();
+        yield return null;
         HandleMenuState(ConnectionState.InGame);
     }
     
-    /// <summary>
-    /// Event handler for when the Disconnect (UTP) button is clicked.
-    /// </summary>
-    public void OnDisconnect()
-    {
-        // This sends a disconnect event to the Host client,
-        // letting them know they are disconnecting.
-        _playerDriver.Disconnect(_clientConnection);
-
-        // We remove the reference to the current connection by overriding it.
-        _clientConnection = default(NetworkConnection);
-    }
-
 #endregion
     
 
