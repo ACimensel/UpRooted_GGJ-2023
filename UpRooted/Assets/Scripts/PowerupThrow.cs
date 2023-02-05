@@ -40,9 +40,9 @@ public class PowerupThrow : NetworkBehaviour
     {
         if (_coroutine == null)
         {
-            if(HeldItem == null)
+            if (HeldItem == null)
             {
-                
+
 
             }
             //Charge throw On Left Mouse Down
@@ -61,7 +61,7 @@ public class PowerupThrow : NetworkBehaviour
 
                 _distToThrow = MinDist;
 
-                if (HeldItem != null) 
+                if (HeldItem != null)
                 {
                     HeldItem.SendMessage("SetTargetPos", TargetPos);
 
@@ -72,7 +72,7 @@ public class PowerupThrow : NetworkBehaviour
                 }
             }
         }
-        if (Input.GetMouseButtonDown(1) && HeldItem != null) 
+        if (Input.GetMouseButtonDown(1) && HeldItem != null)
         {
             DropItem();
         }
@@ -101,8 +101,8 @@ public class PowerupThrow : NetworkBehaviour
         {
             if (plantGrowth.FullyGrown == false)
                 return;
-      
-            plantGrowth.Harvest();
+
+            //plantGrowth.Harvest();
             HeldItem = TouchingObject;
             HeldItem.transform.position = transform.position; 
             HeldItem.transform.parent = transform;
