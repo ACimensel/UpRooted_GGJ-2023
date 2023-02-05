@@ -15,8 +15,7 @@ public class PowerupThrow : NetworkBehaviour
     private float _distToThrow;
     public int ThrowIncreaseSpeed = 12;
     private Coroutine _coroutine;
-
-    public GameObject HeldItem;
+    
     public GameObject TouchingObject;
 
 
@@ -38,15 +37,10 @@ public class PowerupThrow : NetworkBehaviour
 
     void HandleMouseButton()
     {
-        if (_coroutine == null)
+        if (_coroutine == null & IsOwner)
         {
-            if (HeldItem == null)
-            {
-
-
-            }
             //Charge throw On Left Mouse Down
-            else if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0))
             {
                 Debug.Log("Holding primary button.");
                 TargetRend.enabled = true;
@@ -61,25 +55,21 @@ public class PowerupThrow : NetworkBehaviour
 
                 _distToThrow = MinDist;
 
-                if (HeldItem != null)
+                if ( TouchingObject != null)
                 {
-                    HeldItem.SendMessage("SetTargetPos", TargetPos);
-
-                    //NetworkObject networkObject = NetcodeObjectPool.Singleton.GetNetworkObject(projectile.gameObject, transform.position, Quaternion.identity);
-                    //networkObject.gameObject.SendMessage("SetTargetPos", targetPos);
-
+                    if (NetworkManager.Singleton.IsServer)
+                        TouchingObject.SendMessage("SetTargetPos", TargetPos);
+                    else ThrowServerRpc(TouchingObject.GetComponent<NetworkObject>().NetworkObjectId, TargetPos);
                     DropItem();
                 }
             }
         }
-        if (Input.GetMouseButtonDown(1) && HeldItem != null)
-        {
-            DropItem();
-        }
-        else if (Input.GetMouseButtonDown(1) && HeldItem == null && TouchingObject != null)
-        {
-            PickUpItem();
-        }
+    }
+
+    [ServerRpc]
+    private void ThrowServerRpc(ulong objId, Vector3 targetPos)
+    {
+        NetworkManager.SpawnManager.SpawnedObjects[objId].SendMessage("SetTargetPos", targetPos);
     }
 
     private void OnTriggerStay(Collider other)
@@ -95,26 +85,9 @@ public class PowerupThrow : NetworkBehaviour
         TouchingObject = null;
     }
 
-    private void PickUpItem()
-    {
-        if (TouchingObject.TryGetComponent<PlantGrowth>(out PlantGrowth plantGrowth))
-        {
-            if (plantGrowth.FullyGrown == false)
-                return;
-
-            //plantGrowth.Harvest();
-            HeldItem = TouchingObject;
-            HeldItem.transform.position = transform.position; 
-            HeldItem.transform.parent = transform;
-        }
-
-        //ObjectIwantToPickUp.GetComponent<Rigidbody>().isKinematic = true;
-    }
 
     private void DropItem()
     {
-        HeldItem.transform.parent = null;
-        HeldItem = null;
         TouchingObject = null;//???
     }
 }

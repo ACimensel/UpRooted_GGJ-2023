@@ -41,7 +41,7 @@ public class OverlapBox : MonoBehaviour
 
 
 
-        if(PlayerScore >= 10)
+        if(PlayerScore >= 20)
         {
             Lose();
         }
